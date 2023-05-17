@@ -32,7 +32,7 @@ std::string gammaFile = "";
 std::string saveFile = "";
 bool useSampleOutput=false;
 
-using namespace FSLAM;
+using namespace HSLAM;
 
 void parseArgument(char* arg)
 {

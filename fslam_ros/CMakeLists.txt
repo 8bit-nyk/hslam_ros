@@ -10,9 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 #SET PATH TO FSLAM
 
-set(FSLAM_PATH ~/catkin_ws1/src/FSLAM)
+set(FSLAM_PATH ~/catkin_ws/src/FSLAM)
 #set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/lib)
-set(FSLAM_LIBRARY_PATH ~/catkin_ws1/src/FSLAM/build/Debug/lib)
+set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/build/Debug/lib)
 
 # set values from environment variables
 if (NOT FSLAM_PATH)
@@ -56,6 +56,7 @@ message("---- Found FSLAM library at \"${FSLAM_LIBRARY}\"")
 set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/share/OpenCV)
 set(CMAKE_MODULE_PATH ~/catkin_ws/src/fslam_ros/cmake)
 set(DBoW3_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
+set(G2O_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib)
 
 
 find_package(Pangolin 0.2 REQUIRED)
