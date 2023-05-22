@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 set(FSLAM_PATH ~/catkin_ws/src/FSLAM)
 #set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/lib)
-set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/build/Debug/lib)
+set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/build/lib)
 
 # set values from environment variables
 if (NOT FSLAM_PATH)
