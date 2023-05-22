@@ -13,7 +13,6 @@ rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=~/catkin_ws/src/res/
 #ROS RUN HSLAM with D435 CAM
 rosrun fslam_ros fslam_live image:=/camera/color/image_raw calib=~/catkin_ws/src/res/camera.txt gamma=~/catkin_ws/src/res/pcalib.txt vignette=~/catkin_ws/src/res/vignette.png
 
-#git push key
-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
+
 
 
