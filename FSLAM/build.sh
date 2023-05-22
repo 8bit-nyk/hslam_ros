@@ -1,5 +1,5 @@
 #!/bin/bash 
-# gy - 17/7/2019
+# nyk 22/05/2023
 # Run this script once as it will clean up after itself. Everytime you run it will recompile packages (except opencv)
 BuildType="RelWithDebInfo"
 
@@ -69,7 +69,7 @@ fi
 #build SLAM
 #==========
 #cmake_prefix=$InstallDir/lib/cmake
-#cd $SCRIPTPATH && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=$BuildType && make -j $(nproc)
+cd $SCRIPTPATH && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=$BuildType && make -j $(nproc)
 
 
 

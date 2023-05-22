@@ -110,6 +110,7 @@ else ()
 endif ()
 
 # decide if we have openCV
+set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs)
 if (OpenCV_FOUND)
 	message("--- found OpenCV, compiling with opencv library.")
 	include_directories( ${OpenCV_INCLUDE_DIRS} )
