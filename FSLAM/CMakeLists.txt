@@ -15,18 +15,21 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+#message ("OPENCV Directory: ${OpenCV_DIR}")
 
 # required libraries
 find_package(SuiteParse REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost COMPONENTS system thread) 
-find_package(OpenCV 3.4.6 REQUIRED)
+#find_package(OpenCV 3.4.6 REQUIRED)
+find_package(OpenCV 3.4.6 EXACT REQUIRED PATHS ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
 find_package(G2O REQUIRED)
-find_package(DBoW3 REQUIRED)
+find_package(DBoW3 REQUIRED) #PATHS ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs)
 
 # optional libraries
 find_package(LibZip QUIET)
-find_package(Pangolin 0.2 QUIET)
+find_package(Pangolin 0.2 QUIET)# PATHS ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs)
 
 
 # flags
@@ -110,7 +113,6 @@ else ()
 endif ()
 
 # decide if we have openCV
-set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs)
 if (OpenCV_FOUND)
 	message("--- found OpenCV, compiling with opencv library.")
 	include_directories( ${OpenCV_INCLUDE_DIRS} )

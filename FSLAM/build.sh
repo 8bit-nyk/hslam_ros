@@ -15,7 +15,8 @@ InstallDir=$SCRIPTPATH/Thirdparty/CompiledLibs
 
 #install system wide dependencies
 #================================
-sudo apt install libgl1-mesa-dev libglew-dev libsuitesparse-dev libeigen3-dev libboost-all-dev cmake build-essential git libzip-dev ccache freeglut3-dev libgoogle-glog-dev libatlas-base-dev ninja-build
+export DEBIAN_FRONTEND=noninteractive
+sudo apt -y install libgl1-mesa-dev libglew-dev libsuitesparse-dev libeigen3-dev libboost-all-dev cmake build-essential git libzip-dev ccache freeglut3-dev libgoogle-glog-dev libatlas-base-dev ninja-build
 
 #install libceres for compatibility with ubuntu 22:
 cd $SCRIPTPATH/Thirdparty/
@@ -24,10 +25,10 @@ tar -zxf ceres-solver-1.14.0.tar.gz && cd ceres-solver-1.14.0 && mkdir build && 
 cmake .. -DCMAKE_INSTALL_PREFIX=$InstallDir -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCXX11=ON && make -j && make install && cd .. && rm -r build && cd .. && rm ceres-solver-1.14.0.tar.gz && rm -r ceres-solver-1.14.0
 
 #optional libs to record pangolin gui
-sudo apt install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libavdevice-dev
+sudo apt -y install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libavdevice-dev
 
 #if you have OpenCV3.4 comment out the following and specify the directory later
-sudo apt install libjpeg8-dev libpng-dev libtiff5-dev libtiff-dev libavcodec-dev libavformat-dev libv4l-dev libgtk2.0-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools v4l-utils
+sudo apt -y install libjpeg8-dev libpng-dev libtiff5-dev libtiff-dev libavcodec-dev libavformat-dev libv4l-dev libgtk2.0-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools v4l-utils
 cvVersion=3.4.6
 if [ ! -d "$SCRIPTPATH/Thirdparty/opencv-${cvVersion}" ]; then
   DL_opencv="https://github.com/opencv/opencv/archive/${cvVersion}.zip"
@@ -68,7 +69,7 @@ fi
 
 #build SLAM
 #==========
-#cmake_prefix=$InstallDir/lib/cmake
+cmake_prefix=$InstallDir/lib/cmake
 cd $SCRIPTPATH && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=$BuildType && make -j $(nproc)
 
 

@@ -53,17 +53,20 @@ endif()
 
 message("---- Found FSLAM library at \"${FSLAM_LIBRARY}\"")
 
-set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+
 set(CMAKE_MODULE_PATH ~/catkin_ws/src/fslam_ros/cmake)
+set(OpenCV_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+set(Pangolin_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib)
 set(DBoW3_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
 set(G2O_DIR ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib)
 
 
-find_package(Pangolin 0.2 REQUIRED)
+
+find_package(Pangolin 0.2 REQUIRED PATHS ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND Pangolin Headers at\n\"${Pangolin_INCLUDE_DIRS}\"")
 message("---- FOUND Pangolin Libs at\n\"${Pangolin_LIBRARIES}\"")
 
-find_package(OpenCV 3.4.6 REQUIRED)
+find_package(OpenCV 3.4.6 REQUIRED PATHS ~/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND OpenCV Headers at\n\"${OpenCV_INCLUDE_DIRS}\"")
 message("---- FOUND OpenCV Libs at\n\"${OpenCV_LIBS}\"")
 
