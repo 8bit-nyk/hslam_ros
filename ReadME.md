@@ -48,10 +48,11 @@ Otherwise, you might face errors relating to some dependencies not being found
 ```
 git clone https://github.com/8bit-nyk/hslam_ros.git
 ```
+Change its name to **hslam_ros_ws**
 
 2. **Building the main project** .Navigate to the project directory:
 ```
-cd <your_working_directory>/hslam_ros/src/HSLAM
+cd <your_working_directory>/hslam_ros_ws/src/HSLAM
 ```
 
 Before building the main project we need to build the thirdparty dependancies
@@ -100,15 +101,16 @@ cd Thirdparty
     ```
     or 
     ```
-    cd <your_working_directory>/hslam_ros
+    cd <your_working_directory>/hslam_ros_ws
     ```
 
     Initialize and configure catkin:
     ```
     catkin init 
     ```
+
     ```
-    catkin config -DCMAKE_BUILD_TYPE=Release --extend /opt/ros/$ROS_DISTRO 
+    catkin config -DCMAKE_BUILD_TYPE=RelwithDebInfo --extend /opt/ros/$ROS_DISTRO 
     ```
 
     Build catkin workspace:
@@ -117,33 +119,61 @@ cd Thirdparty
     ```
 
 ## Usage
+### Sourcing ROS and catkin
+1. In ALL terminal sessions source ROS using the below command make sure to change <ros_distro> below to your ros distribution :
 
-To run the H-SLAM project you will need to run two containers of the same image.
-One to to publish images from the camera and the other to run the H-SLAM main application.
-
-0. Allow access to containers:
-``` bash
-xhost +
+```
+source /opt/ros/<ros_distro>/setup.bash
 ```
 
-1. Open two terminals and execute the following command in each:
-``` bash
-docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  hslam /bin/bash
+2. Source the catkin workspace using the below:
 ```
-This command starts the container and provides an interactive terminal within it.
+source ~/hslam_ros_ws/devel/setup.bash
+```
+**Pro Tip**
 
-2. In the first terminal run the following command to open a camera stream through ROS and publish the camera's images unto a ROS topic:
-``` bash
+ Automate the Sourcing:
+
+You can add these source commands to your shell startup script so that they run automatically when you open a new terminal.
+1. Edit your shell startup script:
+```
+nano ~/.bashrc
+```
+
+2. Add the source commands:
+```
+source /opt/ros/<ros_distro>/setup.bash
+source ~/hslam_ros_ws/devel/setup.bash
+
+```
+
+3. Save and exit the editor (in nano, press CTRL + X, then Y, then Enter).
+
+4. Reload the startup script to apply changes immediately:
+```
+source ~/.bashrc
+```
+### Running the System
+To run the Hybrid Visual SLAM we need a camera feed over the ROS network.
+
+This can be provided either through a rosbag or through a live camera feed.
+
+To publish the webcam feed (or any standard usb camera) over a ROS topic run the below command:
+
+
+```
 roslaunch usb_cam usb_cam-test.launch
 ```
 A display window will pop with the camera's stream.
 
-3. In the second terminal, execute this command to run the H-SLAM algorithm on the image stream.
+3. In another terminal, execute this command to run the H-SLAM algorithm on the image stream.
 ``` bash
-rosrun hslam_ros hslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
+rosrun hslam_ros hslam_live image:=/usb_cam/image_raw calib=~/hslam_ros_ws/src/res/camera.txt 
 ```
 
 Start moving the camera around and perform realtime Visual SLAM!
+
+P.S. to get better results to provide the proper camera matrix instead of the stock camera.txt file provided.
 
 ### Results:
 
