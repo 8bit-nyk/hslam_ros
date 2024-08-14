@@ -2,7 +2,6 @@
 # nyk 22/05/2023
 # Run this script once as it will clean up after itself. Everytime you run it will recompile packages (except opencv)
 BuildType="RelWithDebInfo"
-
 SCRIPTPATH=$(dirname $0)
 if [ $SCRIPTPATH = '.' ]
 then
@@ -16,9 +15,9 @@ InstallDir=$SCRIPTPATH/CompiledLibs
 #install system wide dependencies
 #================================
 export DEBIAN_FRONTEND=noninteractive
-#sudo apt -y install libgl1-mesa-dev libglew-dev libsuitesparse-dev libeigen3-dev libboost-all-dev cmake build-essential git libzip-dev ccache freeglut3-dev libgoogle-glog-dev libatlas-base-dev ninja-build
-#sudo apt -y install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libavdevice-dev
-#sudo apt -y install libjpeg8-dev libpng-dev libtiff5-dev libtiff-dev libavcodec-dev libavformat-dev libv4l-dev libgtk2.0-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools v4l-utils
+sudo apt -y install libgl1-mesa-dev libglew-dev libsuitesparse-dev libeigen3-dev libboost-all-dev cmake build-essential git libzip-dev ccache freeglut3-dev libgoogle-glog-dev libatlas-base-dev ninja-build
+sudo apt -y install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libavdevice-dev python3-catkin-tools
+sudo apt -y install libjpeg8-dev libpng-dev libtiff5-dev libtiff-dev libavcodec-dev libavformat-dev libv4l-dev libgtk2.0-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools v4l-utils
 
 #install libceres for compatibility with ubuntu 22:
 #cd $SCRIPTPATH/Thirdparty/

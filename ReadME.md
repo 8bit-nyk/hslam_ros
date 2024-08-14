@@ -40,10 +40,10 @@ The project is dependent on specific versions of the following libraries:
 
 ## Building the project
 
-0. Create a catkin workspace
-```
-mkdir -p catkin_ws/
-```
+To build the project with ease follow the directory structure as outlined below.
+
+Otherwise, you might face errors relating to some dependencies not being found 
+
 1. Clone the repository:
 ```
 git clone https://github.com/8bit-nyk/hslam_ros.git
@@ -51,7 +51,7 @@ git clone https://github.com/8bit-nyk/hslam_ros.git
 
 2. **Building the main project** .Navigate to the project directory:
 ```
-cd <your_working_directory>/catkin_ws/src/hslam_ros/HSLAM
+cd <your_working_directory>/hslam_ros/src/HSLAM
 ```
 
 Before building the main project we need to build the thirdparty dependancies
@@ -96,11 +96,11 @@ cd Thirdparty
     
     Navigate back to catkin workspace:
     ```
-    cd ..
+    cd ../../..
     ```
     or 
     ```
-    cd <your_working_directory>/catkin_ws
+    cd <your_working_directory>/hslam_ros
     ```
 
     Initialize and configure catkin:
@@ -115,7 +115,7 @@ cd Thirdparty
     ```
     catkin build hslam_ros
     ```
-    
+
 ## Usage
 
 To run the H-SLAM project you will need to run two containers of the same image.

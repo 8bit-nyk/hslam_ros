@@ -11,10 +11,15 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 #SET PATH TO HSLAM
+message("---- Project Source directory at \"${PROJECT_SOURCE_DIR}\"")
 
-set(HSLAM_PATH /catkin_ws/src/HSLAM)
+# Set default HSLAM path to user's home directory
+set(HSLAM_PATH "$ENV{HOME}/hslam_ros_ws/src/HSLAM")
+
+# Allow the user to override it
+
 #set(HSLAM_LIBRARY_PATH ~/catkin_ws/src/HSLAM/lib)
-set(HSLAM_LIBRARY_PATH /catkin_ws/src/HSLAM/build/lib)
+set(HSLAM_LIBRARY_PATH ${HSLAM_PATH}/build/lib)
 
 # set values from environment variables
 if (NOT HSLAM_PATH)
@@ -56,18 +61,18 @@ endif()
 message("---- Found HSLAM library at \"${HSLAM_LIBRARY}\"")
 
 
-set(CMAKE_MODULE_PATH /catkin_ws/src/hslam_ros/cmake)
-set(OpenCV_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
-set(Pangolin_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
-set(DBoW3_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
-set(G2O_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
+set(CMAKE_MODULE_PATH $ENV{HOME}/Dev/hslam_ros_ws/src/hslam_ros/cmake)
+set(OpenCV_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+set(Pangolin_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
+set(DBoW3_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
+set(G2O_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
 
 
-find_package(Pangolin 0.2 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
+find_package(Pangolin 0.2 REQUIRED)# PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND Pangolin Headers at\n\"${Pangolin_INCLUDE_DIRS}\"")
 message("---- FOUND Pangolin Libs at\n\"${Pangolin_LIBRARIES}\"")
 
-find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
+find_package(OpenCV 3.4.6 REQUIRED)# PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND OpenCV Headers at\n\"${OpenCV_INCLUDE_DIRS}\"")
 message("---- FOUND OpenCV Libs at\n\"${OpenCV_LIBS}\"")
 

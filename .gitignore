@@ -32,12 +32,14 @@
 *.app
 
 build/
-
+devel/
+install/
+logs/
+.catkin_tools/
 result.txt
 
-Thirdparty/CompiledLibs/
+CompiledLibs/
 
-Thirdparty/opencv-3.4.6/
 
 *.avi
 

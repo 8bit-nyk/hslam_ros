@@ -38,7 +38,6 @@ find_package(Pangolin 0.2 QUIET)# PATHS  ~/catkin_ws/src/HSLAM/Thirdparty/Compil
 find_package(PCL 1.8 REQUIRED)
 
 
-
 # flags
 add_definitions("-DENABLE_SSE")
 #detect and number of processors
@@ -95,12 +94,15 @@ set(SOURCE_FILES
 
 
 
+
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_SOURCE_DIR}/Thirdparty/Sophus
   ${PROJECT_SOURCE_DIR}/Thirdparty/sse2neon
   ${EIGEN3_INCLUDE_DIR}
   ${G2O_INCLUDE_DIR}
+  ${CSPARSE_INCLUDE_DIR}
+  ${CHOLMOD_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
 ) 
 
@@ -147,10 +149,8 @@ else()
 	set(LIBZIP_LIBRARY "")
 endif()
 
-
-# compile main library.
-include_directories( ${CSPARSE_INCLUDE_DIR} ${CHOLMOD_INCLUDE_DIR}) 
 add_library(HSLAM_lib ${SOURCE_FILES} ${opencv_SOURCE_FILES} ${pangolin_SOURCE_FILES})
+
 
 
 
