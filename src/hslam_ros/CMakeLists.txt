@@ -10,13 +10,19 @@ find_package(catkin REQUIRED COMPONENTS
 
 )
 
-#SET PATH TO HSLAM
-message("---- Project Source directory at \"${PROJECT_SOURCE_DIR}\"")
 
 # Set default HSLAM path to user's home directory
-set(HSLAM_PATH "$ENV{HOME}/hslam_ros_ws/src/HSLAM")
+#set(HSLAM_PATH "$ENV{HOME}/hslam_ros_ws/src/HSLAM")
 
 # Allow the user to override it
+# Check if an environment variable HSLAM_PATH is set, otherwise use the default path
+if(NOT DEFINED ENV{HSLAM_PATH})
+    set(HSLAM_PATH "$ENV{HOME}/hslam_ros_ws/src/HSLAM")
+else()
+    set(HSLAM_PATH "$ENV{HSLAM_PATH}")
+endif()
+
+message(STATUS "Using HSLAM_PATH: ${HSLAM_PATH}")
 
 #set(HSLAM_LIBRARY_PATH ~/catkin_ws/src/HSLAM/lib)
 set(HSLAM_LIBRARY_PATH ${HSLAM_PATH}/build/lib)
@@ -61,11 +67,16 @@ endif()
 message("---- Found HSLAM library at \"${HSLAM_LIBRARY}\"")
 
 
-set(CMAKE_MODULE_PATH $ENV{HOME}/Dev/hslam_ros_ws/src/hslam_ros/cmake)
-set(OpenCV_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
-set(Pangolin_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
-set(DBoW3_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
-set(G2O_DIR)# /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
+#set(CMAKE_MODULE_PATH $ENV{HOME}/Dev/hslam_ros_ws/src/hslam_ros/cmake)
+set(CMAKE_MODULE_PATH ${HSLAM_PATH}/cmake)
+
+set(OpenCV_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/share/OpenCV)
+set(Pangolin_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake)
+set(DBoW3_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/DBoW3)
+#set(G2O_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/g2o)
+
+#set(G2O_INCLUDE_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/include/g2o)
+# set(G2O_LIBS ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib)
 
 
 find_package(Pangolin 0.2 REQUIRED)# PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
@@ -90,13 +101,14 @@ find_package(Eigen3 REQUIRED)
 find_package(Boost COMPONENTS system thread)
 
 #G2O not found troubleshooting
-find_package(G2O COMPONENTS)
-message("-----G2O troubleshooting-----")
-message("The G2O directory is : ${G2O_DIR}" )
-message("The G2O include  directory is : ${G2O_INCLUDE_DIR}" )
-message("The G2O libraries is : ${G2O_LIBS}" )
-#find_package(G2O REQUIRED COMPONENTS PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
-message ("The following were considered for g2o: ${G2O_CONSIDERED_CONFIGS}")
+# find_package(G2O REQUIRED PATHS ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/cmake/g2o)
+# message ("The following were considered for g2o: ${G2O_CONSIDERED_CONFIGS}")
+# message("-----G2O troubleshooting-----")
+# message("The G2O directory is : ${G2O_DIR}" )
+# message("The G2O headers is : ${G2O_INCLUDE_DIR}" )
+# message("The G2O libraries is : ${G2O_LIBS}" )
+
+find_package(G2O REQUIRED)
 message("\n\n---- FOUND G2O Headers at\n\"${G2O_INCLUDE_DIR}\"")
 message("---- FOUND G2O Libs at\n\"${G2O_LIBS}\"")
 

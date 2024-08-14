@@ -36,6 +36,9 @@ devel/
 install/
 logs/
 .catkin_tools/
+.vscode/
+
+
 result.txt
 
 CompiledLibs/

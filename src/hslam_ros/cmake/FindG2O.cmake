@@ -1,6 +1,6 @@
 # Find the header files
-#Set(PROJECT_SOURCE_DIR ~/Dev/hslam_ros/src/HSLAM)
-Set(G2O_INCLUDE_DIR  ${PROJECT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
+# Set(PROJECT_SOURCE_DIR $ENV{HOME}/Dev/hslam_ros/src/HSLAM)
+# Set(G2O_INCLUDE_DIR  ${PROJECT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
 
 # Macro to unify finding both the debug and release versions of the
 # libraries; this is adapted from the OpenSceneGraph FIND_LIBRARY

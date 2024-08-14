@@ -3,6 +3,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.9)
 
 set(OpenCV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/CompiledLibs/share/OpenCV)
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/CompiledLibs/lib/cmake)
+#set(G2O_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/CompiledLibs/lib/cmake/g2o)
+Set(G2O_INCLUDE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
 # Ensure these paths are set correctly before calling project()
 message ("OPENCV Directory: ${OpenCV_DIR}")
 message("The CMAKE prefix path is: ${CMAKE_PREFIX_PATH}")
@@ -28,6 +30,10 @@ find_package(Boost COMPONENTS system thread)
 find_package(OpenCV 3.4.6 REQUIRED)
 #find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs NO_DEFAULT_PATH)
 find_package(G2O REQUIRED)
+message("\n\n---- FOUND G2O Headers at\n\"${G2O_INCLUDE_DIR}\"")
+
+message("---- FOUND G2O Libs at\n\"${G2O_LIBS}\"")
+
 find_package(DBoW3 REQUIRED) #PATHS  ~/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs)
 
 # optional libraries

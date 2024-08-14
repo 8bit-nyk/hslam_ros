@@ -1,6 +1,6 @@
 # Find the header files
 
-Set(G2O_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
+#Set(G2O_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
 
 # Macro to unify finding both the debug and release versions of the
 # libraries; this is adapted from the OpenSceneGraph FIND_LIBRARY
