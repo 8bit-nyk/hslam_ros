@@ -25,7 +25,7 @@ endif()
 message(STATUS "Using HSLAM_PATH: ${HSLAM_PATH}")
 
 #set(HSLAM_LIBRARY_PATH ~/catkin_ws/src/HSLAM/lib)
-set(HSLAM_LIBRARY_PATH ${HSLAM_PATH}/build/lib)
+#set(HSLAM_LIBRARY_PATH ${HSLAM_PATH}/build/lib)
 
 # set values from environment variables
 if (NOT HSLAM_PATH)
@@ -67,15 +67,15 @@ endif()
 message("---- Found HSLAM library at \"${HSLAM_LIBRARY}\"")
 
 
-#set(CMAKE_MODULE_PATH $ENV{HOME}/Dev/hslam_ros_ws/src/hslam_ros/cmake)
-set(CMAKE_MODULE_PATH ${HSLAM_PATH}/cmake)
+#set(CMAKE_MODULE_PATH $ENV{HOME}/hslam_ros_ws/src/hslam_ros/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${HSLAM_PATH}/cmake" "$ENV{HOME}/hslam_ros_ws/src/hslam_ros/cmake")
 
 set(OpenCV_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/share/OpenCV)
-set(Pangolin_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake)
+set(Pangolin_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/Pangolin)
 set(DBoW3_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/DBoW3)
-#set(G2O_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/g2o)
-
-#set(G2O_INCLUDE_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/include/g2o)
+set(G2O_DIR ${HSLAM_PATH}Thirdparty/CompiledLibs/lib/cmake/g2o)
+set(G2O_INCLUDE_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/include/g2o)
+set(G2O_LIB_DIR ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib)
 # set(G2O_LIBS ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib)
 
 
@@ -103,14 +103,28 @@ find_package(Boost COMPONENTS system thread)
 #G2O not found troubleshooting
 # find_package(G2O REQUIRED PATHS ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/cmake/g2o)
 # message ("The following were considered for g2o: ${G2O_CONSIDERED_CONFIGS}")
-# message("-----G2O troubleshooting-----")
-# message("The G2O directory is : ${G2O_DIR}" )
+message("-----G2O troubleshooting-----")
+message("The G2O directory is : ${G2O_DIR}" )
 # message("The G2O headers is : ${G2O_INCLUDE_DIR}" )
 # message("The G2O libraries is : ${G2O_LIBS}" )
 
 find_package(G2O REQUIRED)
 message("\n\n---- FOUND G2O Headers at\n\"${G2O_INCLUDE_DIR}\"")
 message("---- FOUND G2O Libs at\n\"${G2O_LIBS}\"")
+
+# Manually set G2O libraries if find_package fails to populate G2O_LIBS
+if(NOT G2O_LIBS)
+    set(G2O_LIBS
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_core.so
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_stuff.so
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_solver_csparse.so
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_types_slam3d.so
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_types_sba.so
+        ${HSLAM_PATH}/Thirdparty/CompiledLibs/lib/libg2o_csparse_extension.so
+        # Add other G2O libraries here as needed
+    )
+    message(STATUS "Manually set G2O_LIBS to: ${G2O_LIBS}")
+endif()
 
 catkin_package(
   CATKIN_DEPENDS
@@ -169,11 +183,11 @@ target_link_libraries(hslam_live
     ${HSLAM_LIBRARY}
     ${Pangolin_LIBRARIES}
     ${OpenCV_LIBS}
-    ${G2O_LIBS}
     ${DBoW3_LIB_DIR}/libDBoW3.so
     ${catkin_LIBRARIES}
     ${CSPARSE_LIBRARY}
     ${CHOLMOD_LIBRARIES}
+    ${G2O_LIBS}
     
    )
 
@@ -185,10 +199,10 @@ target_link_libraries(hslam_live_2
     ${HSLAM_LIBRARY}
     ${Pangolin_LIBRARIES}
     ${OpenCV_LIBS}
-    ${G2O_LIBS}
     ${DBoW3_LIB_DIR}/libDBoW3.so
     ${catkin_LIBRARIES}
     ${CSPARSE_LIBRARY}
     ${CHOLMOD_LIBRARIES}
-    
+    ${G2O_LIBS}
+
    )
