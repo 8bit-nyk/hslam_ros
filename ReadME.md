@@ -170,7 +170,11 @@ A display window will pop with the camera's stream.
 ``` bash
 rosrun hslam_ros hslam_live image:=/usb_cam/image_raw calib=~/hslam_ros_ws/src/res/camera.txt 
 ```
+Using ROS launch:
+```
+roslaunch hslam_ros hslam_live.launch
 
+```
 Start moving the camera around and perform realtime Visual SLAM!
 
 P.S. to get better results to provide the proper camera matrix instead of the stock camera.txt file provided.
