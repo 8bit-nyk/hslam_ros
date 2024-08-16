@@ -7,14 +7,11 @@
     ROS Wrapper HSLAM.
 
   </description>
-
-  <author>Jakob Engel</author>
-  <license>see http://vision.in.tum.de/dso</license>
-  <maintainer email="engelj-@in-dot-tum-dot.de">
-    Jakob Engel
+  <license>MIT</license>
+  <author>Nicolas Abboud</author>
+  <maintainer email="nicolasabboud96@gmail.com">
+   Nicolas Abboud
   </maintainer>
-  <!-- <review status="unreviewed" notes=""/> -->
-  <url>http://vision.in.tum.de/dso</url>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>
@@ -22,8 +19,7 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>pcl_conversions</build_depend>
-
-
+  <run_depend>std_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>sensor_msgs</run_depend>
