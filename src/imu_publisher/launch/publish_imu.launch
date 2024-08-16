@@ -1,0 +1,9 @@
+<launch>
+    <!-- Argument to specify the path to the IMU data file -->
+    <arg name="imu_data_file" default="$(env HOME)/hslam_ros_ws/res/imu0/data.csv" />
+
+    <!-- IMU Publisher Node -->
+    <node name="imu_publisher_node" pkg="imu_publisher" type="publish_imu.py" output="screen">
+        <param name="imu_data_file" value="$(arg imu_data_file)" />
+    </node>
+</launch>
