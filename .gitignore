@@ -44,7 +44,7 @@ result.txt
 CompiledLibs/
 
 res/
-imu_publisher/
 *.avi
 
 analytics
+src/HSLAM/Thirdparty/opencv-3.4.6/modules/python/src2/__pycache__/hdr_parser.cpython-38.pyc

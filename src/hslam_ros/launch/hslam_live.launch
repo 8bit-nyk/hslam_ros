@@ -1,6 +1,6 @@
 <launch>
     <!-- Essential Arguments -->
-    <arg name="image_topic" default="/usb_cam/image_raw" />
+    <arg name="image_topic" default="/camera/color/image_raw" />
     <!--arg name="calib_file" default="$(env HOME)/hslam_ros_ws/res/camera.txt" /-->
     <arg name="calib_file" default="$(env HOME)/hslam_ros_ws/res/camera.txt" />
 

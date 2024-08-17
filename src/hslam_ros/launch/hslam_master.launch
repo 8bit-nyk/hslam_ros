@@ -1,0 +1,19 @@
+<launch>
+    <!-- Include the Image Publisher -->
+    <include file="$(find image_publisher)/launch/publish_images.launch">
+        <arg name="image_dir" value="$(env HOME)/hslam_ros_ws/res/cam0/data" />
+        <arg name="csv_file" value="$(env HOME)/hslam_ros_ws/res/cam0/data.csv" />
+    </include>
+
+    <!-- Include the IMU Publisher -->
+    <include file="$(find imu_publisher)/launch/publish_imu.launch">
+        <arg name="imu_data_file" value="$(env HOME)/hslam_ros_ws/res/imu0/data.csv" />
+    </include>
+
+    <!-- Include the hslam_ros Launch -->
+    <include file="$(find hslam_ros)/launch/hslam_live.launch">
+        <arg name="image_topic" value="/camera/color/image_raw" />
+        <arg name="calib_file" value="$(env HOME)/hslam_ros_ws/res/camera.txt" />
+        <!-- Add more arguments if needed -->
+    </include>
+</launch>
