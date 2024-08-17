@@ -1,10 +1,12 @@
 <launch>
     <arg name="image_dir" default="$(env HOME)/hslam_ros_ws/res/cam0/data" />
     <arg name="csv_file" default="$(env HOME)/hslam_ros_ws/res/cam0/data.csv" />
+    <arg name="publish_rate" default="20" />
+
 
     <node name="image_publisher_node" pkg="image_publisher" type="publish_images.py" output="screen">
         <param name="image_dir" value="$(arg image_dir)" />
         <param name="csv_file" value="$(arg csv_file)" />
-        <param name="publish_rate" value="1" />
+        <param name="publish_rate" value="$(arg publish_rate)" />
     </node>
 </launch>
