@@ -7,6 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   cv_bridge
   pcl_conversions
+  rospy
+  robot_localization
 
 )
 

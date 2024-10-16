@@ -2,16 +2,14 @@
 
 import rospy
 import csv
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Pose, PoseWithCovariance, Point, Quaternion
-from geometry_msgs.msg import TwistWithCovariance
+from geometry_msgs.msg import PoseStamped, Pose, Point, Quaternion
 import tf
 import math
 
-# Function to publish GPS data as Odometry
+# Function to publish GPS data as PoseStamped
 def publish_gps_data(file_path):
     # Initialize publisher and node
-    odom_pub = rospy.Publisher('gps/odom', Odometry, queue_size=10)
+    pose_pub = rospy.Publisher('gps/pose', PoseStamped, queue_size=10)
     rospy.init_node('gps_publisher_node', anonymous=True)
     rate = rospy.Rate(10)  # Publish at 10 Hz
 
@@ -36,33 +34,24 @@ def publish_gps_data(file_path):
             # Convert roll, pitch, yaw (heading) to quaternion
             quaternion = tf.transformations.quaternion_from_euler(math.radians(roll), math.radians(pitch), math.radians(heading))
 
-            # Create an Odometry message
-            odom_msg = Odometry()
+            # Create a PoseStamped message
+            pose_msg = PoseStamped()
            
             secs = timestamp_ms // 1_000_000
             nsecs = timestamp_ms % 1_000_000
-            odom_msg.header.stamp = rospy.Time(secs, nsecs)
-            odom_msg.header.stamp = rospy.Time.now()
-            odom_msg.header.frame_id = "odom"
-            odom_msg.child_frame_id = "base_link"
+            pose_msg.header.stamp = rospy.Time(secs, nsecs)
+            # pose_msg.header.stamp = rospy.Time.now()
+            pose_msg.header.frame_id = "gps"
 
             # Set the position
-            odom_msg.pose.pose.position = Point(x, y, z)
+            pose_msg.pose.position = Point(x, y, z)
 
             # Set the orientation
-            odom_msg.pose.pose.orientation = Quaternion(*quaternion)
-
-            # Velocity is unknown, set to zero
-            odom_msg.twist.twist.linear.x = 0.0
-            odom_msg.twist.twist.linear.y = 0.0
-            odom_msg.twist.twist.linear.z = 0.0
-            odom_msg.twist.twist.angular.x = 0.0
-            odom_msg.twist.twist.angular.y = 0.0
-            odom_msg.twist.twist.angular.z = 0.0
+            pose_msg.pose.orientation = Quaternion(*quaternion)
 
             # Publish the message
-            rospy.loginfo(f"Publishing Odometry: Position ({x}, {y}, {z}), Orientation ({quaternion})")
-            odom_pub.publish(odom_msg)
+            rospy.loginfo(f"Publishing PoseStamped: Position ({x}, {y}, {z}), Orientation ({quaternion})")
+            pose_pub.publish(pose_msg)
             
             rate.sleep()
 

@@ -25,5 +25,6 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>cv_bridge</run_depend>
   <run_depend>pcl_conversions</run_depend>
+  <run_depend>robot_localization</run_depend>
 
 </package>
