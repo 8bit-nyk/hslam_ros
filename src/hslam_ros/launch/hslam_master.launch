@@ -1,8 +1,8 @@
 <launch>
     <!-- Include the Image Publisher -->
     <include file="$(find image_publisher)/launch/publish_images.launch">
-        <arg name="image_dir" value="$(env HOME)/hslam_ros_ws/res/cam0/data" />
-        <arg name="csv_file" value="$(env HOME)/hslam_ros_ws/res/cam0/data.csv" />
+        <arg name="image_dir" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/images.zip" />
+        <arg name="times_file" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/times.txt" />
         <arg name="publish_rate" value="20" />
 
     </include>
@@ -15,7 +15,11 @@
     <!-- Include the hslam_ros Launch -->
     <include file="$(find hslam_ros)/launch/hslam_live.launch">
         <arg name="image_topic" value="/camera/color/image_raw" />
-        <arg name="calib_file" value="$(env HOME)/hslam_ros_ws/res/camera.txt" />
+        <arg name="calib_file" value="/media/sf_datasets/ficosa_for_hslam/camera_ficosa.txt" />
         <!-- Add more arguments if needed -->
+    </include>
+
+    <include file="$(find gps_publisher)/launch/gps_pulisher.launch">
+        <arg name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
     </include>
 </launch>

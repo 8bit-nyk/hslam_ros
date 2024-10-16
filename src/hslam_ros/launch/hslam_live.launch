@@ -13,11 +13,11 @@
       <arg name="mode" default="2" />
       <arg name="preset" default="1" />
       <arg name="quiet" default="false" />
-      <arg name="loopClosure" default="false" />
+      <arg name="loopClosure" default="true" />
       <arg name="noLog" default="false" />
 
       <!-- hslam_live Node -->
-      <node name="hslam_live" pkg="hslam_ros" type="hslam_live" output="screen"
+      <node name="hslam_live" pkg="hslam_ros" type="hslam_live" output="screen" required="true"
           args="image:=$(arg image_topic) calib=$(arg calib_file) gamma=$(arg gamma_file) vignette=$(arg vignette_file) mode=$(arg mode) preset=$(arg preset)" >
       </node>
 

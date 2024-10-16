@@ -1,0 +1,9 @@
+<launch>
+  <!-- Set the GPS file path parameter -->
+  <arg name="gps_file_path" default="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
+  
+  <!-- Launch the GPS publisher node -->
+  <node name="gps_publisher_node" pkg="gps_publisher" type="gps_publisher_node.py" output="screen">
+    <param name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv"/>
+  </node>
+</launch>

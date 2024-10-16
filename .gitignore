@@ -42,6 +42,7 @@ logs/
 result.txt
 
 CompiledLibs/
+Results/
 
 res/
 *.avi
