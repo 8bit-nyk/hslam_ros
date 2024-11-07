@@ -11,7 +11,7 @@ def publish_gps_data(file_path):
     # Initialize publisher and node
     pose_pub = rospy.Publisher('gps/pose', PoseStamped, queue_size=10)
     rospy.init_node('gps_publisher_node', anonymous=True)
-    rate = rospy.Rate(10)  # Publish at 10 Hz
+    rate = rospy.Rate(50)  # Publish at 10 Hz
 
     # Open the CSV file
     with open(file_path, 'r') as csvfile:
@@ -30,6 +30,7 @@ def publish_gps_data(file_path):
             heading = float(row[-3])
             pitch = float(row[-2])
             roll = float(row[-1])
+            # print(f"EXTRACTED VALUES:: Timestamp: {timestamp_ms}, Position: ({x}, {y}, {z}), Orientation: ({heading}, {pitch}, {roll})")
 
             # Convert roll, pitch, yaw (heading) to quaternion
             quaternion = tf.transformations.quaternion_from_euler(math.radians(roll), math.radians(pitch), math.radians(heading))
@@ -41,7 +42,7 @@ def publish_gps_data(file_path):
             nsecs = timestamp_ms % 1_000_000
             pose_msg.header.stamp = rospy.Time(secs, nsecs)
             # pose_msg.header.stamp = rospy.Time.now()
-            pose_msg.header.frame_id = "gps"
+            pose_msg.header.frame_id = "map"
 
             # Set the position
             pose_msg.pose.position = Point(x, y, z)

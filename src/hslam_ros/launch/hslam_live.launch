@@ -2,13 +2,13 @@
       <!-- Essential Arguments -->
       <arg name="image_topic" default="/camera/color/image_raw" />
       <!--arg name="calib_file" default="$(env HOME)/hslam_ros_ws/res/camera.txt" /-->
-      <arg name="calib_file" default="$(env HOME)/hslam_ros_ws/res/camera.txt" />
+      <arg name="calib_file" default="/media/sf_datasets/ficosa_for_hslam/camera_ficosa.txt"/>
 
       <!-- Optional Arguments -->
       <arg name="gamma_file" default="" />
       <arg name="vignette_file" default="" />
       <arg name="saveFile" default="" />
-      <arg name="vocabPath" default="" />
+      <arg name="vocabPath" default="$(env HOME)/hslam_ros_ws/src/HSLAM/misc/orbvoc.dbow3" />
       <arg name="useSampleOutput" default="false" />
       <arg name="mode" default="2" />
       <arg name="preset" default="1" />
@@ -20,5 +20,10 @@
       <node name="hslam_live" pkg="hslam_ros" type="hslam_live" output="screen" required="true"
           args="image:=$(arg image_topic) calib=$(arg calib_file) gamma=$(arg gamma_file) vignette=$(arg vignette_file) mode=$(arg mode) preset=$(arg preset)" >
       </node>
+    <!-- <include file="$(find image_publisher)/launch/publish_images.launch">
+        <arg name="image_dir" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/images.zip" />
+        <arg name="times_file" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/times.txt" />
+        <arg name="publish_rate" value="20" />
 
+    </include> -->
 </launch>

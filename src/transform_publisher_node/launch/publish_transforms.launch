@@ -1,0 +1,9 @@
+<launch>
+<arg name="hslam_to_usk_json" default="$(find transform_publisher_node)/src/transformation_from_FICOSAtransformed.json"/>
+  <arg name="gps_to_usk_json" default="$(find transform_publisher_node)/src/ficosa_transformation.json"/>
+
+  <node pkg="transform_publisher_node" type="publish_transforms.py" name="publish_transforms" output="screen">
+    <param name="hslam_to_usk_json" value="$(arg hslam_to_usk_json)"/>
+    <param name="gps_to_usk_json" value="$(arg gps_to_usk_json)"/>
+  </node>
+</launch>

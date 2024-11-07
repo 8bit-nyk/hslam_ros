@@ -1,0 +1,72 @@
+frequency: 30  # Adjust as needed
+
+map_frame: "map"          # Global reference frame
+odom_frame: "odom"        # Odometry reference frame
+base_link_frame: "base_link"  # Robot base frame
+world_frame: "map"
+
+two_d_mode: false
+
+# Pose inputs
+subscribers:
+  pose:
+    - topic: /hslam_pose
+      pose_rejection_threshold: 2.0
+      differential: false
+      queue_size: 10
+      target_frame: ""
+      tf_timeout: 0.1
+      mahalanobis_threshold: 2.5
+      pose_config: [true, true, true, 
+                    true, true, true,
+                    false, false, false, 
+                    false, false, false,
+                    false, false, false]
+      covariance_override: [0.5, 0, 0, 0, 0, 0,
+                            0, 0.5, 0, 0, 0, 0,
+                            0, 0, 0.5, 0, 0, 0,
+                            0, 0, 0, 0.1, 0, 0,
+                            0, 0, 0, 0, 0.1, 0,
+                            0, 0, 0, 0, 0, 0.1]
+
+    - topic: /gps/pose
+      pose_rejection_threshold: 2.0
+      differential: false
+      queue_size: 10
+      target_frame: ""
+      tf_timeout: 0.1
+      mahalanobis_threshold: 2.5
+      pose_config: [true, true, true, 
+                    true, true, true,
+                    false, false, false, 
+                    false, false, false,
+                    false, false, false]
+      covariance_override: [0.5, 0, 0, 0, 0, 0,
+                            0, 0.5, 0, 0, 0, 0,
+                            0, 0, 0.5, 0, 0, 0,
+                            0, 0, 0, 0.1, 0, 0,
+                            0, 0, 0, 0, 0.1, 0,
+                            0, 0, 0, 0, 0, 0.1]
+
+# Velocity inputs (using fake input for testing)
+# subscribers:
+#   twist:
+#     - topic: /fake_velocity
+#       twist_rejection_threshold: 1.0
+#       queue_size: 10
+#       target_frame: ""
+#       mahalanobis_threshold: 2.5
+
+process_noise_covariance: [0.1, 0, 0, 0, 0, 0,
+                           0, 0.1, 0, 0, 0, 0,
+                           0, 0, 0.1, 0, 0, 0,
+                           0, 0, 0, 0.05, 0, 0,
+                           0, 0, 0, 0, 0.05, 0,
+                           0, 0, 0, 0, 0, 0.05]
+
+initial_estimate_covariance: [1e-9, 0, 0, 0, 0, 0,
+                              0, 1e-9, 0, 0, 0, 0,
+                              0, 0, 1e-9, 0, 0, 0,
+                              0, 0, 0, 1e-9, 0, 0,
+                              0, 0, 0, 0, 1e-9, 0,
+                              0, 0, 0, 0, 0, 1e-9]

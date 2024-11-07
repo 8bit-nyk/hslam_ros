@@ -226,8 +226,8 @@ void publishResults() {
 		std::vector<SE3> points;
 		std::vector<Eigen::Vector3f>map_points;
 
-		path.header.frame_id="map";
-		pose_stamped.header.frame_id="map";
+		path.header.frame_id="odom";
+		pose_stamped.header.frame_id="odom";
 
 		points=fullSystem->getPath();
 		for (size_t i = 0; i < points.size(); i++)
@@ -256,7 +256,7 @@ void publishResults() {
 			cloud.push_back(point);
 		}
 		pcl::toROSMsg(cloud, map);
-		map.header.frame_id="map";
+		map.header.frame_id="odom";
 		map_pub.publish(map);
     
 }

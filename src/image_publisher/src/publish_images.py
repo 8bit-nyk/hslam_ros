@@ -83,11 +83,14 @@ def publish_images_from_zip():
     image_pub = rospy.Publisher('/camera/color/image_raw', Image, queue_size=10)
     bridge = CvBridge()
 
-    zip_file_path = os.path.expanduser('~/hslam_ros_ws/res/cam0/data.zip')
-    txt_file_path = os.path.expanduser('~/hslam_ros_ws/res/cam0/timestamps.txt')
+    zip_file_path = os.path.expanduser('/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/images.zip')
+    txt_file_path = os.path.expanduser('/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/times.txt')
+
+    # zip_file_path = os.path.expanduser('~/hslam_ros_ws/res/cam0/data.zip')
+    # txt_file_path = os.path.expanduser('~/hslam_ros_ws/res/cam0/timestamps.txt')
     zip_file = rospy.get_param('~image_dir', zip_file_path)
     txt_file = rospy.get_param('~times_file', txt_file_path)
-    publish_rate = rospy.get_param('~publish_rate', 20)
+    publish_rate = rospy.get_param('~publish_rate', 30)
 
     rospy.loginfo(f"Starting image publisher node with zip file: {zip_file} and timestamps file: {txt_file}")
     rospy.loginfo(f"Publishing rate set to {publish_rate} Hz")
@@ -129,6 +132,7 @@ def publish_images_from_zip():
                     # Publish the image
                     image_pub.publish(ros_image)
                     rospy.loginfo(f"Published image: {image_filename}")
+                    rospy.loginfo(f"Timestamp: {secs}.{nsecs}")
 
                 else:
                     rospy.logwarn(f"Image not found in zip: {image_filename}")

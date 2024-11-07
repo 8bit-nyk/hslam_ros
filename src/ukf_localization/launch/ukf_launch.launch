@@ -1,0 +1,7 @@
+
+<launch>
+  <!-- Launch the UKF Node -->
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_filter_node" output="screen">
+    <rosparam command="load" file="$(find ukf_localization)/config/ukf_config.yaml"/>
+  </node>
+</launch>

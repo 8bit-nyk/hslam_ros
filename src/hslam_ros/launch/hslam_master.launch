@@ -3,7 +3,7 @@
     <include file="$(find image_publisher)/launch/publish_images.launch">
         <arg name="image_dir" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/images.zip" />
         <arg name="times_file" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/video0/times.txt" />
-        <arg name="publish_rate" value="20" />
+        <arg name="publish_rate" value="30" />
 
     </include>
 
@@ -23,44 +23,14 @@
         <arg name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
     </include>
 
+    <!-- Include the Transform Publisher -->
+    <include file="$(find transform_publisher_node)/launch/publish_transforms.launch" />
+    
+    <!-- Include the UKF Node Launch -->
+    <include file="$(find ukf_localization)/launch/ukf_launch.launch"/>
 
-    <!-- Include the UKF Localization Node -->
-    <node pkg="robot_localization" type="ukf_localization_node" name="ukf_localization" output="screen">
-        <param name="frequency" value="30"/>
-        <param name="sensor_timeout" value="0.1"/>
-        <param name="two_d_mode" value="false"/>
-        <param name="transform_time_offset" value="0.0"/>
-        <param name="transform_timeout" value="0.0"/>
-        <param name="print_diagnostics" value="true"/>
+      
 
-        <!-- Frame definitions -->
-        <param name="odom_frame" value="odom"/>
-        <param name="base_link_frame" value="base_link"/>
-        <param name="world_frame" value="odom"/>
 
-        <!-- Set use_control to false as no control input is used -->
-        <rosparam param="use_control">false</rosparam>
-
-        <!-- Input topic remapping -->
-        <remap from="odometry/filtered" to="/ukf_pose"/>
-        <remap from="odom0" to="/pose_topic_1"/>
-        <remap from="odom1" to="/pose_topic_2"/>
-
-        <!-- Pose data configurations -->
-        <param name="odom0_config" value="[true, true, true,
-                                            false, false, false,
-                                            false, false, false,
-                                            false, false, false,
-                                            false, false, false]"/>
-        <param name="odom0_differential" value="false"/>
-        <param name="odom0_queue_size" value="10"/>
-
-        <param name="odom1_config" value="[true, true, true,
-                                            false, false, false,
-                                            false, false, false,
-                                            false, false, false,
-                                            false, false, false]"/>
-        <param name="odom1_differential" value="false"/>
-        <param name="odom1_queue_size" value="10"/>
-    </node>
+   
 </launch>
