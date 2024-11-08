@@ -1,0 +1,39 @@
+<launch>
+  <!-- Launch Fake Pose Publisher -->
+  <node pkg="ukf_localization" type="fake_pose_publisher.py" name="fake_pose_publisher" output="screen"/>
+
+  <!-- Launch Fake Velocity Publisher -->
+  <node pkg="ukf_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/>
+
+  <!-- Launch the UKF Node -->
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_filter_node" output="screen">
+    <rosparam command="load" file="$(find ukf_localization)/config/ukf_config.yaml"/>
+  </node>
+
+    <!-- Static Transform Publisher for map -> odom -->
+  <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0 0 0 map odom 100" />
+
+  <!-- Static Transform Publisher for odom -> base_link -->
+  <node pkg="tf" type="static_transform_publisher" name="static_odom_to_base_link" args="0 0 0 0 0 0 odom base_link 100" />
+
+    <!-- Launch RViz -->
+  <node pkg="rviz" type="rviz" name="rviz" />
+
+</launch>
+
+<!-- <launch> -->
+  <!-- Launch the UKF Node with default parameters
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_filter_node" output="screen">
+    <param name="frequency" value="10"/>
+    <param name="map_frame" value="map"/>
+    <param name="odom_frame" value="odom"/>
+    <param name="world_frame" value="odom"/>
+    <param name="base_link_frame" value="base_link"/>
+    <param name="publish_tf" value="true"/>
+    <param name="two_d_mode" value="true"/>
+    <rosparam param="pose0">/simple_pose</rosparam>
+    <rosparam param="pose0_config">[true, true, false, false, false, true, false, false, false, false, false, false, false, false, false]</rosparam>
+    <rosparam param="twist0">/simple_velocity</rosparam>
+    <rosparam param="twist0_config">[true, true, false, false, false, true]</rosparam>
+  </node>
+</launch> -->
