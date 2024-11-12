@@ -24,12 +24,19 @@
     </include>
 
     <!-- Include the Transform Publisher -->
-    <include file="$(find transform_publisher_node)/launch/publish_transforms.launch" />
+    <!-- <include file="$(find transform_publisher_node)/launch/publish_transforms.launch" /> -->
     
     <!-- Include the UKF Node Launch -->
     <include file="$(find ukf_localization)/launch/ukf_launch.launch"/>
+    
+    <!-- Static Transform Publisher for map -> odom -->
+    <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0 0 0 map odom 100" />
 
-      
+    <!-- Static Transform Publisher for odom -> base_link -->
+    <node pkg="tf" type="static_transform_publisher" name="static_odom_to_base_link" args="0 0 0 0 0 0 odom base_link 100" />
+
+        <!-- Launch RViz -->
+    <node pkg="rviz" type="rviz" name="rviz" />
 
 
    

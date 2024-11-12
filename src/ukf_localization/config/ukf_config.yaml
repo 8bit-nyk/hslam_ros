@@ -1,4 +1,4 @@
-frequency: 10  # Frequency at which the UKF runs
+frequency: 30  # Frequency at which the UKF runs
 
 map_frame: "map"          # Global reference frame
 odom_frame: "odom"        # Odometry reference frame
@@ -7,11 +7,15 @@ world_frame: "odom"       # Set world frame to "odom" to simplify transform rela
 
 # Enable 2D mode for simplified testing
 # This will disable roll and pitch, making the state estimation simpler
-two_d_mode: true
+two_d_mode: false
 
 # Pose input from a single source (e.g., /simple_pose)
-pose0: /simple_pose
-pose0_config: [true, true, false, false, false, true, false, false, false, false, false, false, false, false, false]
+pose0: /hslam_pose
+pose0_config: [true, true, true, 
+                true, true, true,
+                false, false, false, 
+                false, false, false,
+                false, false, false]
 pose0_queue_size: 10
 pose0_differential: false
 pose0_relative: false
@@ -19,23 +23,27 @@ pose0_rejection_threshold: 2.0
 pose0_mahalanobis_threshold: 2.5
 
 # Twist input for basic velocity information (e.g., /simple_velocity)
-twist0: /simple_velocity
-twist0_config: [false, false, false, false, false, false, true, false, false, false, false, false, false, false, false]
+pose1: /gps/pose
+pose1_config: [true, true, true, 
+                true, true, true,
+                false, false, false, 
+                false, false, false,
+                false, false, false]
 # [true, true, false, false, false, true]
-twist0_queue_size: 10
-twist0_differential: false
-twist0_rejection_threshold: 1.0
-twist0_relative: false
-twist0_tf_timeout: 1.0
-twist0_mahalanobis_threshold: 2.5
+pose1_queue_size: 10
+pose1_differential: false
+pose1_rejection_threshold: 1.0
+pose1_relative: false
+pose1_tf_timeout: 1.0
+pose1_mahalanobis_threshold: 2.5
 
 # Process noise covariance: Defines the level of uncertainty in the filter's internal prediction model
 process_noise_covariance: [0.1, 0, 0, 0, 0, 0,
                            0, 0.1, 0, 0, 0, 0,
-                           0, 0, 1e-9, 0, 0, 0,
-                           0, 0, 0, 1e-9, 0, 0,
-                           0, 0, 0, 0, 1e-9, 0,
-                           0, 0, 0, 0, 0, 1e-9]
+                           0, 0, 0.1, 0, 0, 0,
+                           0, 0, 0, 0.05, 0, 0,
+                           0, 0, 0, 0, 0.05, 0,
+                           0, 0, 0, 0, 0, 0.05]
 
 # Initial estimate covariance: Represents the initial uncertainty level of the filter
 initial_estimate_covariance: [1e-9, 0, 0, 0, 0, 0,
