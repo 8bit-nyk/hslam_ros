@@ -5,18 +5,18 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 import numpy as np
 
 def publish_fake_pose():
-    pub = rospy.Publisher('/simple_pose', PoseWithCovarianceStamped, queue_size=10)
-    rospy.init_node('fake_pose_publisher', anonymous=True)
+    pub = rospy.Publisher('/simple_pose_2', PoseWithCovarianceStamped, queue_size=10)
+    rospy.init_node('fake_pose_publisher_2', anonymous=True)
     rate = rospy.Rate(10)  # 10 Hz
 
-    x, y, theta = 0.0, 0.0, 0.0  # Initial pose
+    x, y, theta = 0.1, 0.5, 0.5  # Initial pose
     velocity = 0.1  # Linear velocity (m/s)
     angular_velocity = 0.05  # Angular velocity (rad/s)
 
     while not rospy.is_shutdown():
         pose_msg = PoseWithCovarianceStamped()
         pose_msg.header.stamp = rospy.Time.now()
-        pose_msg.header.frame_id = "map"
+        pose_msg.header.frame_id = "odom"
 
         # Update position and orientation
         x += velocity * np.cos(theta) * 0.1  # Assuming a rate of 10 Hz, hence dt = 0.1
@@ -35,8 +35,8 @@ def publish_fake_pose():
         pose_msg.pose.pose.orientation.w = q[3]
 
         # Add covariance (keep it small but non-zero for testing)
-        pose_msg.pose.covariance = [1, 0, 0, 0, 0, 0,
-                                    0, 0.2, 0, 0, 0, 0,
+        pose_msg.pose.covariance = [0.5, 0, 0, 0, 0, 0,
+                                    0, 0.1, 0, 0, 0, 0,
                                     0, 0, 1e-9, 0, 0, 0,
                                     0, 0, 0, 1e-9, 0, 0,
                                     0, 0, 0, 0, 1e-9, 0,

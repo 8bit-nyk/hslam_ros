@@ -1,9 +1,10 @@
 <launch>
   <!-- Launch Fake Pose Publisher -->
   <node pkg="ukf_localization" type="fake_pose_publisher.py" name="fake_pose_publisher" output="screen"/>
+  <node pkg="ukf_localization" type="fake_pose_publisher_2.py" name="fake_pose_publisher_2" output="screen"/>
 
   <!-- Launch Fake Velocity Publisher -->
-  <node pkg="ukf_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/>
+  <!-- <node pkg="ukf_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/> -->
 
   <!-- Launch the UKF Node -->
   <node pkg="robot_localization" type="ukf_localization_node" name="ukf_filter_node" output="screen">
@@ -17,7 +18,7 @@
   <node pkg="tf" type="static_transform_publisher" name="static_odom_to_base_link" args="0 0 0 0 0 0 odom base_link 100" />
 
     <!-- Launch RViz -->
-  <node pkg="rviz" type="rviz" name="rviz" />
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ukf_localization)/config/config.rviz"/>
 
 </launch>
 

@@ -26,12 +26,12 @@ def publish_fake_velocity():
         twist_msg.twist.twist.angular.z = angular_velocity
 
         # Add covariance (keep it non-zero)
-        twist_msg.twist.covariance = [0.1, 0, 0, 0, 0, 0,
-                                      0, 0.1, 0, 0, 0, 0,
-                                      0, 0, 0.1, 0, 0, 0,
-                                      0, 0, 0, 0.1, 0, 0,
-                                      0, 0, 0, 0, 0.1, 0,
-                                      0, 0, 0, 0, 0, 0.1]
+        twist_msg.twist.covariance = [1, 0, 0, 0, 0, 0,
+                                      0, 1, 0, 0, 0, 0,
+                                      0, 0, 1e-9, 0, 0, 0,
+                                      0, 0, 0, 0.01, 0, 0,
+                                      0, 0, 0, 0, 1e-9, 0,
+                                      0, 0, 0, 0, 0, 1e-9]
 
         pub.publish(twist_msg)
         rate.sleep()
