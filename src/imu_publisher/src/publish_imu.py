@@ -55,7 +55,7 @@ def publish_imu_data():
 
                 # Publish the message
                 imu_pub.publish(imu_msg)
-                rospy.loginfo(f"Published IMU data for timestamp: {timestamp_ns}")
+                # rospy.loginfo(f"Published IMU data for timestamp: {timestamp_ns}")
 
                 rate.sleep()
 

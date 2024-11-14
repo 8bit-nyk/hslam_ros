@@ -28,6 +28,7 @@ Based on and inspired by DSO project by Jakob Engel
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include "cv_bridge/cv_bridge.h"
 #include <sensor_msgs/PointCloud2.h>
 #include <nav_msgs/Path.h>
@@ -219,7 +220,7 @@ int frameID = 0;
 
 void publishResults() {        
 		nav_msgs::Path path;
-		geometry_msgs::PoseStamped pose_stamped;
+		geometry_msgs::PoseWithCovarianceStamped pose_stamped;
 		sensor_msgs::PointCloud2 map;
 		pcl::PointCloud<pcl::PointXYZ> cloud;
 
@@ -232,17 +233,28 @@ void publishResults() {
 		points=fullSystem->getPath();
 		for (size_t i = 0; i < points.size(); i++)
 		{
-			pose_stamped.pose.position.x=points[i].translation().transpose().x();
-			pose_stamped.pose.position.y=points[i].translation().transpose().y();
-			pose_stamped.pose.position.z=points[i].translation().transpose().z();
-			pose_stamped.pose.orientation.x=points[i].so3().unit_quaternion().x();
-			pose_stamped.pose.orientation.y=points[i].so3().unit_quaternion().y();
-			pose_stamped.pose.orientation.z=points[i].so3().unit_quaternion().z();
-			pose_stamped.pose.orientation.w=points[i].so3().unit_quaternion().w();
+			pose_stamped.pose.pose.position.x=points[i].translation().transpose().x();
+			pose_stamped.pose.pose.position.y=points[i].translation().transpose().y();
+			pose_stamped.pose.pose.position.z=points[i].translation().transpose().z();
+			pose_stamped.pose.pose.orientation.x=points[i].so3().unit_quaternion().x();
+			pose_stamped.pose.pose.orientation.y=points[i].so3().unit_quaternion().y();
+			pose_stamped.pose.pose.orientation.z=points[i].so3().unit_quaternion().z();
+			pose_stamped.pose.pose.orientation.w=points[i].so3().unit_quaternion().w();
 
-			path.poses.push_back(pose_stamped);
+			// path.poses.push_back(pose_stamped.pose);
+			// Convert PoseWithCovarianceStamped to PoseStamped for path
+			geometry_msgs::PoseStamped pose_stamped_msg;
+			pose_stamped_msg.header = pose_stamped.header;
+			pose_stamped_msg.pose = pose_stamped.pose.pose;
+
+			path.poses.push_back(pose_stamped_msg);
 		}
-
+		pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
+										0, 0.1, 0, 0, 0, 0,
+										0, 0, 1e-9, 0, 0, 0,
+										0, 0, 0, 1e-9, 0, 0,
+										0, 0, 0, 0, 1e-9, 0,
+										0, 0, 0, 0, 0, 1e-9};
 		path_pub.publish(path);
 		pose_pub.publish(pose_stamped);
 
@@ -378,7 +390,7 @@ int main( int argc, char** argv )
 	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam_map", 10);
-	pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/hslam_pose", 10);
+	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam_pose", 10);
 	path_pub = nh.advertise<nav_msgs::Path>("/hslam_path", 10);
 
     //NA: replacing ros_spin with interruptable sequence

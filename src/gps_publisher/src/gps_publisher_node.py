@@ -2,17 +2,22 @@
 
 import rospy
 import csv
-from geometry_msgs.msg import PoseStamped, Pose, Point, Quaternion
+from geometry_msgs.msg import PoseWithCovarianceStamped, Pose, Point, Quaternion
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Point, Quaternion
+from nav_msgs.msg import Path
 import tf
 import math
 
 # Function to publish GPS data as PoseStamped
 def publish_gps_data(file_path):
     # Initialize publisher and node
-    pose_pub = rospy.Publisher('gps/pose', PoseStamped, queue_size=10)
+    pose_pub = rospy.Publisher('gps/pose', PoseWithCovarianceStamped, queue_size=10)
+    path_pub = rospy.Publisher('/gps/path', Path, queue_size=10)
     rospy.init_node('gps_publisher_node', anonymous=True)
     rate = rospy.Rate(50)  # Publish at 10 Hz
-
+    # Create a Path message
+    path_msg = Path()
+    path_msg.header.frame_id = "map"
     # Open the CSV file
     with open(file_path, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
@@ -36,7 +41,7 @@ def publish_gps_data(file_path):
             quaternion = tf.transformations.quaternion_from_euler(math.radians(roll), math.radians(pitch), math.radians(heading))
 
             # Create a PoseStamped message
-            pose_msg = PoseStamped()
+            pose_msg = PoseWithCovarianceStamped()
            
             secs = timestamp_ms // 1_000_000
             nsecs = timestamp_ms % 1_000_000
@@ -45,14 +50,30 @@ def publish_gps_data(file_path):
             pose_msg.header.frame_id = "map"
 
             # Set the position
-            pose_msg.pose.position = Point(x, y, z)
+            pose_msg.pose.pose.position = Point(x, y, z)
 
             # Set the orientation
-            pose_msg.pose.orientation = Quaternion(*quaternion)
-
+            pose_msg.pose.pose.orientation = Quaternion(*quaternion)
+            pose_msg.pose.covariance = [0.5, 0, 0, 0, 0, 0,
+                                        0, 0.5, 0, 0, 0, 0,
+                                        0, 0, 1e-9, 0, 0, 0,
+                                        0, 0, 0, 1e-9, 0, 0,
+                                        0, 0, 0, 0, 1e-9, 0,
+                                        0, 0, 0, 0, 0, 1e-9]
             # Publish the message
-            rospy.loginfo(f"Publishing PoseStamped: Position ({x}, {y}, {z}), Orientation ({quaternion})")
+            # rospy.loginfo(f"Publishing PoseStamped: Position ({x}, {y}, {z}), Orientation ({quaternion})")
             pose_pub.publish(pose_msg)
+            # Create a PoseStamped message for the path
+            pose_stamped_msg = PoseStamped()
+            pose_stamped_msg.header.stamp = pose_msg.header.stamp
+            pose_stamped_msg.header.frame_id = "map"
+            pose_stamped_msg.pose = pose_msg.pose.pose
+
+            # Append the PoseStamped message to the Path message
+            path_msg.poses.append(pose_stamped_msg)
+
+            # Publish the Path message
+            path_pub.publish(path_msg)
             
             rate.sleep()
 

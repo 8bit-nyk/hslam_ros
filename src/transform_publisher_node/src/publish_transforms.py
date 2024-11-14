@@ -46,16 +46,16 @@ if __name__ == '__main__':
     rospy.init_node('publish_static_transforms')
 
     # Default file paths to the JSON files
-    default_hslam_to_usk_json = "src/transform_publisher_node/src/transformation_from_FICOSAtransformed.json"  # Adjust path as needed
-    default_gps_to_usk_json = "src/transform_publisher_node/src/ficosa_transformation.json"  # Adjust path as needed
+    default_hslam_to_usk_json = "src/transform_publisher_node/src/No_transformation.json"  # Adjust path as needed
+    default_gps_to_hslam_json = "src/transform_publisher_node/src/transformation_FICOSARAW-to-HSLAM.json"  # Adjust path as needed
 
     # Get the file paths from launch arguments or use default paths
     hslam_to_usk_json = rospy.get_param('~hslam_to_usk_json', default_hslam_to_usk_json)
-    gps_to_usk_json = rospy.get_param('~gps_to_usk_json', default_gps_to_usk_json)
+    gps_to_hslam_json = rospy.get_param('~gps_to_hslam_json', default_gps_to_hslam_json)
 
     # Start separate threads for each transform
     thread1 = threading.Thread(target=publish_transform_from_json, args=(hslam_to_usk_json, "odom", "base_link"))
-    thread2 = threading.Thread(target=publish_transform_from_json, args=(gps_to_usk_json, "map", "base_link"))
+    thread2 = threading.Thread(target=publish_transform_from_json, args=(gps_to_hslam_json, "map", "odom"))
 
     # Set the threads as daemon so they stop when the main program stops
     thread1.daemon = True

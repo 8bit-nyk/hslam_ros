@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /Odometry1
         - /Odometry1/Shape1
+        - /PoseWithCovariance2
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -116,7 +117,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: /simple_pose
+      Topic: /hslam_pose
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -147,7 +148,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: /simple_pose_2
+      Topic: /gps/pose
       Unreliable: false
       Value: true
   Enabled: true
@@ -178,7 +179,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10.286972045898438
+      Distance: 31.94977569580078
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -214,5 +215,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 72
-  Y: 27
+  X: 396
+  Y: 120

@@ -22,8 +22,8 @@ def publish_images_tumvi():
     csv_file = rospy.get_param('~times_file', csv_file_path)
     publish_rate = rospy.get_param('~publish_rate', 20)
 
-    rospy.loginfo(f"Starting image publisher node with image directory: {image_dir} and CSV file: {csv_file}")
-    rospy.loginfo(f"Publishing rate set to {publish_rate} Hz")
+    # rospy.loginfo(f"Starting image publisher node with image directory: {image_dir} and CSV file: {csv_file}")
+    # rospy.loginfo(f"Publishing rate set to {publish_rate} Hz")
 
     try:
         with open(csv_file, 'r') as csvfile:
@@ -60,7 +60,7 @@ def publish_images_tumvi():
 
                     # Publish the image
                     image_pub.publish(ros_image)
-                    rospy.loginfo(f"Published image: {image_filename}")
+                    # rospy.loginfo(f"Published image: {image_filename}")
 
                 else:
                     rospy.logwarn(f"Image not found: {image_path}")
@@ -131,8 +131,8 @@ def publish_images_from_zip():
 
                     # Publish the image
                     image_pub.publish(ros_image)
-                    rospy.loginfo(f"Published image: {image_filename}")
-                    rospy.loginfo(f"Timestamp: {secs}.{nsecs}")
+                    # rospy.loginfo(f"Published image: {image_filename}")
+                    # rospy.loginfo(f"Timestamp: {secs}.{nsecs}")
 
                 else:
                     rospy.logwarn(f"Image not found in zip: {image_filename}")
