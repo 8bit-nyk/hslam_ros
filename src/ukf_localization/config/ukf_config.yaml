@@ -3,7 +3,7 @@ frequency: 30  # Frequency at which the UKF runs
 map_frame: "map"          # Global reference frame
 odom_frame: "odom"        # Odometry reference frame
 base_link_frame: "base_link"  # Robot base frame
-world_frame: "odom"       # Set world frame to "odom" to simplify transform relationships
+world_frame: "map"       # Set world frame to "odom" to simplify transform relationships
 
 # Enable 2D mode for simplified testing
 # This will disable roll and pitch, making the state estimation simpler
@@ -65,4 +65,4 @@ initial_estimate_covariance: [1, 0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0, 1e-9]
 
 # Set true to publish the transform from odom_frame to base_link_frame
-publish_tf: true
+publish_tf: false

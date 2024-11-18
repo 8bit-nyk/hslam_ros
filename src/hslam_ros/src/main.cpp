@@ -229,6 +229,7 @@ void publishResults() {
 
 		path.header.frame_id="odom";
 		pose_stamped.header.frame_id="odom";
+		pose_stamped.header.stamp = ros::Time::now();
 
 		points=fullSystem->getPath();
 		for (size_t i = 0; i < points.size(); i++)
@@ -246,6 +247,7 @@ void publishResults() {
 			geometry_msgs::PoseStamped pose_stamped_msg;
 			pose_stamped_msg.header = pose_stamped.header;
 			pose_stamped_msg.pose = pose_stamped.pose.pose;
+			
 
 			path.poses.push_back(pose_stamped_msg);
 		}

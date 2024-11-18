@@ -30,7 +30,8 @@ def publish_transform_from_json(json_file, parent_frame, child_frame):
 
     while not rospy.is_shutdown():
         br.sendTransform(
-            (translation[0], translation[1], translation[2]),
+            #(translation[0], translation[1], translation[2]),
+            (0,0,0),
             quat,
             rospy.Time.now(),
             child_frame,

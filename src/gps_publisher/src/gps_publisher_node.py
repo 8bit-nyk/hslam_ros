@@ -11,10 +11,10 @@ import math
 # Function to publish GPS data as PoseStamped
 def publish_gps_data(file_path):
     # Initialize publisher and node
-    pose_pub = rospy.Publisher('gps/pose', PoseWithCovarianceStamped, queue_size=10)
+    pose_pub = rospy.Publisher('/gps/pose', PoseWithCovarianceStamped, queue_size=10)
     path_pub = rospy.Publisher('/gps/path', Path, queue_size=10)
     rospy.init_node('gps_publisher_node', anonymous=True)
-    rate = rospy.Rate(50)  # Publish at 10 Hz
+    rate = rospy.Rate(100)  # Publish at 10 Hz
     # Create a Path message
     path_msg = Path()
     path_msg.header.frame_id = "map"
@@ -43,10 +43,10 @@ def publish_gps_data(file_path):
             # Create a PoseStamped message
             pose_msg = PoseWithCovarianceStamped()
            
-            secs = timestamp_ms // 1_000_000
-            nsecs = timestamp_ms % 1_000_000
-            pose_msg.header.stamp = rospy.Time(secs, nsecs)
-            # pose_msg.header.stamp = rospy.Time.now()
+            # secs = timestamp_ms // 1_000_000
+            # nsecs = timestamp_ms % 1_000_000
+            # pose_msg.header.stamp = rospy.Time(secs, nsecs)
+            pose_msg.header.stamp = rospy.Time.now()
             pose_msg.header.frame_id = "map"
 
             # Set the position
