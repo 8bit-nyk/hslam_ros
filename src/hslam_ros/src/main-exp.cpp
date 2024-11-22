@@ -326,9 +326,9 @@ int main(int argc, char** argv) {
 
     ros::NodeHandle nh;
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
-    map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam_map", 10);
-    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/hslam_pose", 10);
-    path_pub = nh.advertise<nav_msgs::Path>("/hslam_path", 10);
+    map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam/map", 10);
+    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/hslam/pose", 10);
+    path_pub = nh.advertise<nav_msgs::Path>("/hslam/path", 10);
 
     ros::Rate loop_rate(20);  // Adjust the rate as needed
 

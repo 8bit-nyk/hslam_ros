@@ -186,9 +186,9 @@ The HSLAM system output two files when it exists:
 2. **map.pcd** file containing point cloud of the contrusted map. 
 
 Additionally, the following data is published over the ROS network:
-1. **/hslam_pose**: publishes the current camera pose.
-2. **/hslam_path**: published the path tracked so far.
-3. **/hslam_map**: publishes the map redered so far.
+1. **/hslam/pose**: publishes the current camera pose.
+2. **/hslam/path**: published the path tracked so far.
+3. **/hslam/map**: publishes the map redered so far.
 
 
 ## Features
