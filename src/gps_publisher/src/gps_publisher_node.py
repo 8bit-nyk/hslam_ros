@@ -2,23 +2,26 @@
 
 import rospy
 import csv
-from geometry_msgs.msg import PoseWithCovarianceStamped, Pose, Point, Quaternion
+import math
 from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Point, Quaternion
 from nav_msgs.msg import Path
+from sensor_msgs.msg import NavSatFix, Imu
 import tf
-import math
 
-# Function to publish GPS data as PoseStamped
 def publish_gps_data(file_path):
-    # Initialize publisher and node
+    # Initialize publishers
     pose_pub = rospy.Publisher('/gps/pose', PoseWithCovarianceStamped, queue_size=10)
     path_pub = rospy.Publisher('/gps/path', Path, queue_size=10)
+    navsat_pub = rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
+    imu_pub = rospy.Publisher('/gps/imu', Imu, queue_size=10)
+    
     rospy.init_node('gps_publisher_node', anonymous=True)
-    rate = rospy.Rate(100)  # Publish at 10 Hz
+    rate = rospy.Rate(20)  # Publish at 10 Hz
+
     # Create a Path message
     path_msg = Path()
     path_msg.header.frame_id = "map"
-    # Open the CSV file
+
     with open(file_path, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
         next(csv_reader)  # Skip header
@@ -27,32 +30,44 @@ def publish_gps_data(file_path):
             if rospy.is_shutdown():
                 break
 
-            # Extract position and orientation data from the last seven columns
-            timestamp_ms = int(row[-7])
-            x = float(row[-6])
-            y = float(row[-5])
-            z = float(row[-4])
-            heading = float(row[-3])
+            # Extract data from the CSV
+            latitude = float(row[4])  # Adjust based on column indices
+            longitude = float(row[5])
+            altitude = float(row[6])
+            heading = float(row[-3])  # Earth-referenced heading
             pitch = float(row[-2])
             roll = float(row[-1])
-            # print(f"EXTRACTED VALUES:: Timestamp: {timestamp_ms}, Position: ({x}, {y}, {z}), Orientation: ({heading}, {pitch}, {roll})")
+            x, y, z = float(row[-6]), float(row[-5]), float(row[-4])  # XYZ positions
 
-            # Convert roll, pitch, yaw (heading) to quaternion
-            quaternion = tf.transformations.quaternion_from_euler(math.radians(roll), math.radians(pitch), math.radians(heading))
+            # Convert heading to quaternion
+            quaternion = tf.transformations.quaternion_from_euler(
+                math.radians(roll), math.radians(pitch), math.radians(heading)
+            )
 
-            # Create a PoseStamped message
+            # Publish NavSatFix message
+            navsat_msg = NavSatFix()
+            navsat_msg.header.stamp = rospy.Time.now()
+            navsat_msg.header.frame_id = "map"
+            navsat_msg.latitude = latitude
+            navsat_msg.longitude = longitude
+            navsat_msg.altitude = altitude
+            navsat_msg.position_covariance = [1e-9] * 9
+            navsat_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_APPROXIMATED
+            navsat_pub.publish(navsat_msg)
+
+            # Publish Imu message with heading
+            imu_msg = Imu()
+            imu_msg.header.stamp = rospy.Time.now()
+            imu_msg.header.frame_id = "base_link"
+            imu_msg.orientation = Quaternion(*quaternion)
+            imu_msg.orientation_covariance = [1e-3, 0, 0, 0, 1e-3, 0, 0, 0, 1e-3]
+            imu_pub.publish(imu_msg)
+
+            # Publish PoseWithCovarianceStamped message
             pose_msg = PoseWithCovarianceStamped()
-           
-            # secs = timestamp_ms // 1_000_000
-            # nsecs = timestamp_ms % 1_000_000
-            # pose_msg.header.stamp = rospy.Time(secs, nsecs)
             pose_msg.header.stamp = rospy.Time.now()
             pose_msg.header.frame_id = "map"
-
-            # Set the position
             pose_msg.pose.pose.position = Point(x, y, z)
-
-            # Set the orientation
             pose_msg.pose.pose.orientation = Quaternion(*quaternion)
             pose_msg.pose.covariance = [0.5, 0, 0, 0, 0, 0,
                                         0, 0.5, 0, 0, 0, 0,
@@ -60,30 +75,22 @@ def publish_gps_data(file_path):
                                         0, 0, 0, 1e-9, 0, 0,
                                         0, 0, 0, 0, 1e-9, 0,
                                         0, 0, 0, 0, 0, 1e-9]
-            # Publish the message
-            # rospy.loginfo(f"Publishing PoseStamped: Position ({x}, {y}, {z}), Orientation ({quaternion})")
             pose_pub.publish(pose_msg)
-            # Create a PoseStamped message for the path
+
+            # Update Path message
             pose_stamped_msg = PoseStamped()
             pose_stamped_msg.header.stamp = pose_msg.header.stamp
             pose_stamped_msg.header.frame_id = "map"
             pose_stamped_msg.pose = pose_msg.pose.pose
-
-            # Append the PoseStamped message to the Path message
             path_msg.poses.append(pose_stamped_msg)
-
-            # Publish the Path message
             path_pub.publish(path_msg)
-            
+
             rate.sleep()
 
 if __name__ == '__main__':
     try:
         rospy.init_node('gps_publisher_node', anonymous=True)
-        
-        # Get the GPS file path from the parameter server
         file_path = rospy.get_param('~gps_file_path', '/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv')
-        
         publish_gps_data(file_path)
     except rospy.ROSInterruptException:
         pass

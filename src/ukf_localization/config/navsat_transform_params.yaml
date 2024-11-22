@@ -1,0 +1,22 @@
+# navsat_transform_params.yaml
+frequency: 30
+
+# Frames
+world_frame: "odom"
+base_link_frame: "base_link"
+odom_frame: "odom"
+
+# Topics
+imu_topic: "/gps/imu"
+gps_topic: "/gps/fix"
+odom_topic: "/gps/odom"
+
+# Datum setup (optional for a fixed global position)
+datum_latitude: 0.0
+datum_longitude: 0.0
+datum_altitude: 0.0
+
+# Other configurations
+zero_altitude: true
+broadcast_cartesian_transform: false  # Disable broadcasting of transforms
+publish_filtered_gps: true
