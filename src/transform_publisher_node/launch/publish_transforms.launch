@@ -1,9 +1,9 @@
 <launch>
-  <arg name="hslam_to_usk_json" default="$(find transform_publisher_node)/src/No_transformation.json"/>
-  <arg name="gps_to_hslam_json" default="$(find transform_publisher_node)/src/transformation_HSLAM-to-FICOSARAW.json"/>
+  <arg name="odom_to_baselink_json" default="$(find transform_publisher_node)/src/No_transformation.json"/>
+  <arg name="map_to_odom_json" default="$(find transform_publisher_node)/src/No_transformation.json"/>
 
   <node pkg="transform_publisher_node" type="publish_transforms.py" name="publish_transforms" output="screen">
-    <param name="hslam_to_usk_json" value="$(arg hslam_to_usk_json)"/>
-    <param name="gps_to_hslam_json" value="$(arg gps_to_hslam_json)"/>
+    <param name="odom_to_baselink_json" value="$(arg odom_to_baselink_json)"/>
+    <param name="map_to_odom_json" value="$(arg map_to_odom_json)"/>
   </node>
 </launch>

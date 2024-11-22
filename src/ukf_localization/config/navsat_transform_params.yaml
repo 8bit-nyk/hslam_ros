@@ -1,22 +1,29 @@
-# navsat_transform_params.yaml
-frequency: 30
+frequency: 30  # Update frequency in Hz
 
-# Frames
-world_frame: "odom"
-base_link_frame: "base_link"
-odom_frame: "odom"
+# Frame definitions
+world_frame: "map"           # Global reference frame
+odom_frame: "odom"           # Odometry reference frame
+base_link_frame: "base_link" # Robot's base frame
 
 # Topics
-imu_topic: "/gps/imu"
-gps_topic: "/gps/fix"
-odom_topic: "/gps/odom"
+gps_topic: "/gps/fix"        # Topic for GPS data (sensor_msgs/NavSatFix)
+imu_data: "/gps/imu"        # Topic for IMU data (sensor_msgs/Imu)
+odom_topic: "/odometry/filtered"          # Optional odometry data topic
 
-# Datum setup (optional for a fixed global position)
-datum_latitude: 0.0
-datum_longitude: 0.0
-datum_altitude: 0.0
+# Datum (known reference position for initializing map frame)
+datum_latitude: 41.222349    # Datum latitude from provided ROS info
+datum_longitude: 1.731149    # Datum longitude from provided ROS info
+datum_altitude: 62.696000    # Datum altitude from provided ROS info
 
-# Other configurations
-zero_altitude: true
-broadcast_cartesian_transform: false  # Disable broadcasting of transforms
-publish_filtered_gps: true
+# Magnetic declination
+magnetic_declination_radians: 0.013446  # 0.77 degrees converted to radians (0.77 * π / 180)
+
+# Miscellaneous parameters
+yaw_offset: 0.0                  # If needed, adjust for IMU yaw discrepancies
+zero_altitude: true              # Use zero altitude for 2D mode (optional)
+broadcast_utm_transform: false   # Disable UTM transform broadcasting
+publish_filtered_gps: true       # Publish transformed GPS as /gps/odom
+
+# Transform tolerances
+transform_timeout: 0.1           # Timeout for transform lookup
+wait_for_datum: true             # Ensure datum is available before processing GPS

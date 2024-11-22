@@ -47,7 +47,7 @@ def publish_gps_data(file_path):
             # Publish NavSatFix message
             navsat_msg = NavSatFix()
             navsat_msg.header.stamp = rospy.Time.now()
-            navsat_msg.header.frame_id = "map"
+            navsat_msg.header.frame_id = "gps"
             navsat_msg.latitude = latitude
             navsat_msg.longitude = longitude
             navsat_msg.altitude = altitude
@@ -60,7 +60,7 @@ def publish_gps_data(file_path):
             imu_msg.header.stamp = rospy.Time.now()
             imu_msg.header.frame_id = "base_link"
             imu_msg.orientation = Quaternion(*quaternion)
-            imu_msg.orientation_covariance = [1e-3, 0, 0, 0, 1e-3, 0, 0, 0, 1e-3]
+            imu_msg.orientation_covariance = [0.03, 0, 0, 0, 0.03, 0, 0, 0, 0.1] # From datasheet of IMU xnav650
             imu_pub.publish(imu_msg)
 
             # Publish PoseWithCovarianceStamped message

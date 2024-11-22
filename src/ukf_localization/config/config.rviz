@@ -8,10 +8,15 @@ Panels:
         - /Status1
         - /Odometry1
         - /Odometry1/Shape1
+        - /Odometry1/Covariance1
+        - /Odometry1/Covariance1/Position1
+        - /PoseWithCovariance1
         - /Path1
         - /Odometry2
         - /Imu1
         - /PoseWithCovariance2
+        - /PoseWithCovariance2/Covariance1
+        - /PoseWithCovariance2/Covariance1/Position1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -70,7 +75,7 @@ Visualization Manager:
           Value: true
         Position:
           Alpha: 0.30000001192092896
-          Color: 204; 51; 204
+          Color: 52; 101; 164
           Scale: 1
           Value: true
         Value: true
@@ -88,7 +93,7 @@ Visualization Manager:
         Head Radius: 0.10000000149011612
         Shaft Length: 1
         Shaft Radius: 0.05000000074505806
-        Value: Arrow
+        Value: Axes
       Topic: /odometry/filtered
       Unreliable: false
       Value: true
@@ -119,8 +124,8 @@ Visualization Manager:
       Queue Size: 10
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
-      Shape: Arrow
-      Topic: /hslam_pose
+      Shape: Axes
+      Topic: /hslam/pose
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -144,7 +149,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /hslam_path
+      Topic: /hslam/path
       Unreliable: false
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -208,7 +213,7 @@ Visualization Manager:
           Value: true
         Position:
           Alpha: 0.30000001192092896
-          Color: 204; 51; 204
+          Color: 78; 154; 6
           Scale: 1
           Value: true
         Value: true
@@ -219,7 +224,7 @@ Visualization Manager:
       Queue Size: 10
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
-      Shape: Arrow
+      Shape: Axes
       Topic: /gps/pose
       Unreliable: false
       Value: true
@@ -275,7 +280,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10.81219482421875
+      Distance: 7.70330810546875
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -291,9 +296,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.784796416759491
+      Pitch: 1.1847954988479614
       Target Frame: <Fixed Frame>
-      Yaw: 5.635406970977783
+      Yaw: 2.762218713760376
     Saved: ~
 Window Geometry:
   Displays:
