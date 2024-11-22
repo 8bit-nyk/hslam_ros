@@ -136,6 +136,9 @@ public:
 	std::vector<SE3> getPath();
 	std::vector<Eigen::Vector3f> getMap();
 
+	// New method to access velocity
+    SE3 getVelocity() const;
+
 
 	void debugPlot(std::string name);
 

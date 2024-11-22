@@ -32,6 +32,7 @@ Based on and inspired by DSO project by Jakob Engel
 #include "cv_bridge/cv_bridge.h"
 #include <sensor_msgs/PointCloud2.h>
 #include <nav_msgs/Path.h>
+#include <nav_msgs/Odometry.h>
 #include <pcl_conversions/pcl_conversions.h>
 
 using namespace HSLAM;
@@ -48,6 +49,7 @@ int preset= 0;
 ros::Publisher map_pub ;
 ros::Publisher pose_pub ;
 ros::Publisher path_pub ;
+ros::Publisher odom_pub;
 
 void parseArgument(char* arg)
 {
@@ -220,43 +222,75 @@ int frameID = 0;
 
 void publishResults() {        
 		nav_msgs::Path path;
+		nav_msgs::Odometry odom_msg;
 		geometry_msgs::PoseWithCovarianceStamped pose_stamped;
+		geometry_msgs::PoseStamped pose_stamped_msg;
 		sensor_msgs::PointCloud2 map;
 		pcl::PointCloud<pcl::PointXYZ> cloud;
 
 		std::vector<SE3> points;
-		std::vector<Eigen::Vector3f>map_points;
+		std::vector<Eigen::Vector3f> map_points;
 
+		points=fullSystem->getPath();
+		SE3 velocity = fullSystem->getVelocity();
+
+		// std::cout<<"#######################"<<std::endl;
+		// std::cout << "Velocity: "<< velocity.translation().transpose()<< std::endl;
+		
 		path.header.frame_id="odom";
 		pose_stamped.header.frame_id="odom";
 		pose_stamped.header.stamp = ros::Time::now();
+		// Populate the Odometry message
+		odom_msg.header.stamp = ros::Time::now();
+		odom_msg.header.frame_id = "odom";
+		odom_msg.child_frame_id = "base_link";
 
-		points=fullSystem->getPath();
+		
 		for (size_t i = 0; i < points.size(); i++)
 		{
-			pose_stamped.pose.pose.position.x=points[i].translation().transpose().x();
-			pose_stamped.pose.pose.position.y=points[i].translation().transpose().y();
-			pose_stamped.pose.pose.position.z=points[i].translation().transpose().z();
+			pose_stamped.pose.pose.position.x=points[i].translation().x();
+			pose_stamped.pose.pose.position.y=points[i].translation().y();
+			pose_stamped.pose.pose.position.z=points[i].translation().z();
 			pose_stamped.pose.pose.orientation.x=points[i].so3().unit_quaternion().x();
 			pose_stamped.pose.pose.orientation.y=points[i].so3().unit_quaternion().y();
 			pose_stamped.pose.pose.orientation.z=points[i].so3().unit_quaternion().z();
 			pose_stamped.pose.pose.orientation.w=points[i].so3().unit_quaternion().w();
-
+			// Populate the Path message
 			// path.poses.push_back(pose_stamped.pose);
 			// Convert PoseWithCovarianceStamped to PoseStamped for path
-			geometry_msgs::PoseStamped pose_stamped_msg;
 			pose_stamped_msg.header = pose_stamped.header;
 			pose_stamped_msg.pose = pose_stamped.pose.pose;
-			
-
 			path.poses.push_back(pose_stamped_msg);
+
+			// Populate the Odometry message
+			// Directly assign pose (position, orientation and covariance) from PoseWithCovarianceStamped to Odometry message
+    		odom_msg.pose = pose_stamped.pose;
+			// Retrieve and set the twist (linear and angular velocity)
+			odom_msg.twist.twist.linear.x = velocity.translation().x();
+			odom_msg.twist.twist.linear.y = velocity.translation().y();
+			odom_msg.twist.twist.linear.z = velocity.translation().z();
+			odom_msg.twist.twist.angular.x = velocity.so3().log().x();
+			odom_msg.twist.twist.angular.y = velocity.so3().log().y();
+			odom_msg.twist.twist.angular.z = velocity.so3().log().z();
+		
+
 		}
 		pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
 										0, 0.1, 0, 0, 0, 0,
-										0, 0, 1e-9, 0, 0, 0,
+										0, 0, 0.1, 0, 0, 0,
 										0, 0, 0, 1e-9, 0, 0,
 										0, 0, 0, 0, 1e-9, 0,
 										0, 0, 0, 0, 0, 1e-9};
+		
+		// Set the covariance for twist
+		odom_msg.twist.covariance = {0.1, 0, 0, 0, 0, 0,
+									0, 0.1, 0, 0, 0, 0,
+									0, 0, 0.1, 0, 0, 0,
+									0, 0, 0, 1e-9, 0, 0,
+									0, 0, 0, 0, 1e-9, 0,
+									0, 0, 0, 0, 0, 1e-9};
+		// Publish the Odometry message
+		odom_pub.publish(odom_msg);
 		path_pub.publish(path);
 		pose_pub.publish(pose_stamped);
 
@@ -303,7 +337,7 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 	undistImg->timestamp=img->header.stamp.toSec(); // relay the timestamp to HSLAM
 	fullSystem->addActiveFrame(undistImg, frameID);
 	frameID++;
-	if (frameID>50)
+	if (frameID>5)
 	{
 	publishResults();
 	}
@@ -391,9 +425,10 @@ int main( int argc, char** argv )
     ros::NodeHandle nh;
 	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
-	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam_map", 10);
-	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam_pose", 10);
-	path_pub = nh.advertise<nav_msgs::Path>("/hslam_path", 10);
+	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam/map", 20);
+	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam/pose", 20);
+	path_pub = nh.advertise<nav_msgs::Path>("/hslam/path", 20);
+	odom_pub = nh.advertise<nav_msgs::Odometry>("/hslam/odom", 20);
 
     //NA: replacing ros_spin with interruptable sequence
     //ros::spin();

@@ -394,6 +394,9 @@ std::vector<SE3> FullSystem::getPath()
 
 }
 
+SE3 FullSystem::getVelocity() const {
+    return Velocity;
+}
 
 Vec5 FullSystem::trackNewCoarse(FrameHessian* fh, bool writePose)
 {
