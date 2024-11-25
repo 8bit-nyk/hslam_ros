@@ -16,7 +16,7 @@ def publish_gps_data(file_path):
     imu_pub = rospy.Publisher('/gps/imu', Imu, queue_size=10)
     
     rospy.init_node('gps_publisher_node', anonymous=True)
-    rate = rospy.Rate(20)  # Publish at 10 Hz
+    rate = rospy.Rate(60)  # Publish at 10 Hz
 
     # Create a Path message
     path_msg = Path()
@@ -59,6 +59,7 @@ def publish_gps_data(file_path):
             imu_msg = Imu()
             imu_msg.header.stamp = rospy.Time.now()
             imu_msg.header.frame_id = "base_link"
+            # imu_msg.child_frame_id = "base_link"
             imu_msg.orientation = Quaternion(*quaternion)
             imu_msg.orientation_covariance = [0.03, 0, 0, 0, 0.03, 0, 0, 0, 0.1] # From datasheet of IMU xnav650
             imu_pub.publish(imu_msg)
@@ -71,10 +72,10 @@ def publish_gps_data(file_path):
             pose_msg.pose.pose.orientation = Quaternion(*quaternion)
             pose_msg.pose.covariance = [0.5, 0, 0, 0, 0, 0,
                                         0, 0.5, 0, 0, 0, 0,
-                                        0, 0, 1e-9, 0, 0, 0,
-                                        0, 0, 0, 1e-9, 0, 0,
-                                        0, 0, 0, 0, 1e-9, 0,
-                                        0, 0, 0, 0, 0, 1e-9]
+                                        0, 0, 0.5, 0, 0, 0,
+                                        0, 0, 0, 0.5, 0, 0,
+                                        0, 0, 0, 0, 0.5, 0,
+                                        0, 0, 0, 0, 0, 0.5]
             pose_pub.publish(pose_msg)
 
             # Update Path message

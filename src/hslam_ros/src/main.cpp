@@ -233,9 +233,6 @@ void publishResults() {
 
 		points=fullSystem->getPath();
 		SE3 velocity = fullSystem->getVelocity();
-
-		// std::cout<<"#######################"<<std::endl;
-		// std::cout << "Velocity: "<< velocity.translation().transpose()<< std::endl;
 		
 		path.header.frame_id="odom";
 		pose_stamped.header.frame_id="odom";
@@ -244,7 +241,6 @@ void publishResults() {
 		odom_msg.header.stamp = ros::Time::now();
 		odom_msg.header.frame_id = "odom";
 		odom_msg.child_frame_id = "base_link";
-
 		
 		for (size_t i = 0; i < points.size(); i++)
 		{
@@ -255,7 +251,12 @@ void publishResults() {
 			pose_stamped.pose.pose.orientation.y=points[i].so3().unit_quaternion().y();
 			pose_stamped.pose.pose.orientation.z=points[i].so3().unit_quaternion().z();
 			pose_stamped.pose.pose.orientation.w=points[i].so3().unit_quaternion().w();
-			// Populate the Path message
+			pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
+											0, 0.1, 0, 0, 0, 0,
+											0, 0, 0.1, 0, 0, 0,
+											0, 0, 0, 0.1, 0, 0,
+											0, 0, 0, 0, 0.1, 0,
+											0, 0, 0, 0, 0, 0.1};// Populate the Path message
 			// path.poses.push_back(pose_stamped.pose);
 			// Convert PoseWithCovarianceStamped to PoseStamped for path
 			pose_stamped_msg.header = pose_stamped.header;
@@ -272,23 +273,19 @@ void publishResults() {
 			odom_msg.twist.twist.angular.x = velocity.so3().log().x();
 			odom_msg.twist.twist.angular.y = velocity.so3().log().y();
 			odom_msg.twist.twist.angular.z = velocity.so3().log().z();
+			// Set the covariance for twist
+			odom_msg.twist.covariance = {0.1, 0, 0, 0, 0, 0,
+											0, 0.1, 0, 0, 0, 0,
+											0, 0, 0.1, 0, 0, 0,
+											0, 0, 0, 0.1, 0, 0,
+											0, 0, 0, 0, 0.1, 0,
+											0, 0, 0, 0, 0, 0.1};
 		
 
 		}
-		pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
-										0, 0.1, 0, 0, 0, 0,
-										0, 0, 0.1, 0, 0, 0,
-										0, 0, 0, 1e-9, 0, 0,
-										0, 0, 0, 0, 1e-9, 0,
-										0, 0, 0, 0, 0, 1e-9};
+	
 		
-		// Set the covariance for twist
-		odom_msg.twist.covariance = {0.1, 0, 0, 0, 0, 0,
-									0, 0.1, 0, 0, 0, 0,
-									0, 0, 0.1, 0, 0, 0,
-									0, 0, 0, 1e-9, 0, 0,
-									0, 0, 0, 0, 1e-9, 0,
-									0, 0, 0, 0, 0, 1e-9};
+	
 		// Publish the Odometry message
 		odom_pub.publish(odom_msg);
 		path_pub.publish(path);
