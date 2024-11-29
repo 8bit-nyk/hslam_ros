@@ -84,7 +84,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: false
+      Enabled: true
       Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -101,12 +101,12 @@ Visualization Manager:
         Value: Axes
       Topic: /odometry/filtered_local
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 25; 0
-      Enabled: false
+      Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
@@ -125,7 +125,7 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /hslam/path
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -167,7 +167,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: false
+      Enabled: true
       Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -184,7 +184,7 @@ Visualization Manager:
         Value: Axes
       Topic: /odometry/gps
       Unreliable: false
-      Value: false
+      Value: true
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -202,7 +202,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: false
-      Enabled: false
+      Enabled: true
       Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -219,7 +219,7 @@ Visualization Manager:
         Value: Axes
       Topic: /hslam/odom
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
@@ -274,6 +274,8 @@ Visualization Manager:
           Value: true
         odom:
           Value: true
+        utm:
+          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -285,6 +287,8 @@ Visualization Manager:
           odom:
             base_link:
               {}
+          utm:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -308,7 +312,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -332,7 +336,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 99.04157257080078
+      Distance: 3.069171667098999
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -348,9 +352,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.059796880930662155
+      Pitch: 0.7547961473464966
       Target Frame: <Fixed Frame>
-      Yaw: 3.5440924167633057
+      Yaw: 4.199102401733398
     Saved: ~
 Window Geometry:
   Displays:

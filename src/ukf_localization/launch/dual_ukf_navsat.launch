@@ -7,20 +7,20 @@
 
        The first EKF instance produces the odom->base_link transform. The second EKF produces the map->odom transform,
        but requires the odom->base_link transform from the first instance in order to do so. See the
-       params/dual_ekf_navsat_example.yaml file for parameter specification.
+       params/dual_ukf_navsat_example.yaml file for parameter specification.
 -->
 
 <launch>
 
-  <rosparam command="load" file="$(find robot_localization)/params/dual_ekf_navsat_example.yaml" />
-
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_odom" clear_params="true">
+  <!-- <rosparam command="load" file="$(find robot_localization)/params/dual_ukf_navsat_example.yaml" /> -->
+    <rosparam command="load" file="$(find ukf_localization)/config/dual_ukf_navsat.yaml" />   
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_odom" clear_params="true">
       <remap from="odometry/wheel" to="/hslam/odom"/>
       <remap from="imu/data" to="/gps/imu"/>
       <remap from="odometry/filtered" to="odometry/filtered_local"/>
   </node>
 
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_map" clear_params="true">
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_map" clear_params="true">
       <remap from="odometry/wheel" to="/hslam/odom"/>
       <remap from="odometry/filtered" to="odometry/filtered_global"/>
       <remap from="imu/data" to="/gps/imu"/>
