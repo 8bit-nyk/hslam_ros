@@ -9,6 +9,8 @@ Panels:
         - /Odometry1/Shape1
         - /Odometry1/Covariance1
         - /Odometry1/Covariance1/Position1
+        - /Path2
+        - /Odometry2
         - /Odometry2/Shape1
         - /Odometry2/Covariance1
         - /Odometry2/Covariance1/Position1
@@ -128,7 +130,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 25; 255; 0
-      Enabled: false
+      Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
@@ -147,7 +149,7 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /gps/path
       Unreliable: false
-      Value: false
+      Value: true
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -238,7 +240,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: false
+      Enabled: true
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: PoseWithCovariance
@@ -248,7 +250,7 @@ Visualization Manager:
       Shape: Axes
       Topic: /gps/pose
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz_plugin_tutorials/Imu
       Color: 204; 51; 204
@@ -268,6 +270,8 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
       Marker Alpha: 1
@@ -277,9 +281,10 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            {}
+        map:
+          odom:
+            base_link:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -303,7 +308,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -327,7 +332,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 25.397092819213867
+      Distance: 99.04157257080078
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -343,9 +348,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2397966384887695
+      Pitch: 0.059796880930662155
       Target Frame: <Fixed Frame>
-      Yaw: 4.919103145599365
+      Yaw: 3.5440924167633057
     Saved: ~
 Window Geometry:
   Displays:

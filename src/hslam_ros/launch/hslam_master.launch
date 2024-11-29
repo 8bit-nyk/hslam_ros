@@ -14,9 +14,12 @@
 
 
     <!-- Include the GPS Publisher -->
-    <include file="$(find gps_publisher)/launch/gps_pulisher.launch">
+    <node pkg="ukf_localization" name="gps_publisher_node" type="gps_publisher_node.py" output="screen">
+        <param name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv"/>
+    </node>
+    <!-- <include file="$(find gps_publisher)/launch/gps_pulisher.launch">
         <arg name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
-    </include>
+    </include> -->
 
     <!-- Launch NSEW marker visualization node -->
     <node pkg="ukf_localization" type="direction_markers.py" name="nsew_publisher" output="screen"/>
@@ -41,10 +44,10 @@
    
     <!-- Include the Transform Publisher -->
      <!--JSON Transform Publisher -->
-    <!-- <node pkg="ukf_localization" type="publish_transforms.py" name="publish_transforms" output="screen">
+    <node pkg="ukf_localization" type="publish_transforms.py" name="publish_transforms_node" output="screen">
         <param name="odom_to_baselink_json" value="$(find ukf_localization)/utils/transformations/No_transformation.json"/>
         <param name="map_to_odom_json" value="$(find ukf_localization)/utils/transformations/ficosa_transformation.json"/>
-    </node> -->
+    </node>
     <!-- Static Transform Publisher for map -> odom -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0.01257 −0.00216 −1.9514 map odom 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0 0 0  map odom 100" /> -->
