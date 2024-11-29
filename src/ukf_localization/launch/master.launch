@@ -1,9 +1,9 @@
 <launch>
       <!-- Include the hslam_ros Launch -->
-    <!-- <include file="$(find hslam_ros)/launch/hslam_live.launch">
+    <include file="$(find hslam_ros)/launch/hslam_live.launch">
         <arg name="image_topic" value="/camera/color/image_raw" />
         <arg name="calib_file" value="/media/sf_datasets/ficosa_for_hslam/camera_ficosa.txt" />
-    </include> -->
+    </include>
 
     <!-- Include the Image Publisher -->
     <include file="$(find image_publisher)/launch/publish_images.launch">
@@ -12,42 +12,23 @@
         <arg name="publish_rate" value="20" />
     </include>
 
-
     <!-- Include the GPS Publisher -->
-    <node pkg="ukf_localization" name="gps_publisher_node" type="gps_publisher_node.py" output="screen">
+    <node pkg="fused_localization" name="gps_publisher_node" type="gps_publisher_node.py" output="screen">
         <param name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv"/>
     </node>
-    <!-- <include file="$(find gps_publisher)/launch/gps_pulisher.launch">
-        <arg name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
-    </include> -->
-
-    <!-- Launch NSEW marker visualization node -->
-    <node pkg="ukf_localization" type="direction_markers.py" name="nsew_publisher" output="screen"/>
-
 
     <!-- Launch Fake Velocity Publisher -->
-    <!-- <node pkg="ukf_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/> -->
-    
-    <!-- NavSat Transform Node -->
-    <!-- <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" output="screen">
-        <rosparam file="$(find ukf_localization)/config/navsat_transform_params.yaml" command="load" />
-    </node> -->
-
-    <!-- <include file="$(find ukf_localization)/launch/navsat_launch.launch"/> -->
+    <!-- <node pkg="fused_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/> -->
     
     <!-- Include the UKF Node Launch -->
- 
-   
-    <!-- <include file="$(find ukf_localization)/launch/dual_ekf_navsat_example.launch"/> -->
-   
-   
+    <include file="$(find fused_localization)/launch/dual_ekf_navsat_example.launch"/>
    
     <!-- Include the Transform Publisher -->
      <!--JSON Transform Publisher -->
-    <node pkg="ukf_localization" type="publish_transforms.py" name="publish_transforms_node" output="screen">
-        <param name="odom_to_baselink_json" value="$(find ukf_localization)/utils/transformations/No_transformation.json"/>
-        <param name="map_to_odom_json" value="$(find ukf_localization)/utils/transformations/ficosa_transformation.json"/>
-    </node>
+    <!-- <node pkg="fused_localization" type="publish_transforms.py" name="publish_transforms_node" output="screen">
+        <param name="odom_to_baselink_json" value="$(find fused_localization)/utils/transformations/No_transformation.json"/>
+        <param name="map_to_odom_json" value="$(find fused_localization)/utils/transformations/ficosa_transformation.json"/>
+    </node> -->
     <!-- Static Transform Publisher for map -> odom -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0.01257 −0.00216 −1.9514 map odom 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0 0 0  map odom 100" /> -->
@@ -56,9 +37,10 @@
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_odom_to_base_link" args="0 0 0 0 0 0.01256 odom base_link 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_odom_to_base_link" args="0 0 0 0 0 0  odom base_link 100" /> -->
 
-    
- 
+     <!-- Launch NSEW marker visualization node -->
+    <node pkg="fused_localization" type="direction_markers.py" name="nsew_publisher" output="screen"/>
+
     <!-- Launch RViz -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ukf_localization)/config/config.rviz"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find fused_localization)/config/config.rviz"/>
 
 </launch>
