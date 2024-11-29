@@ -1,10 +1,9 @@
 <launch>
       <!-- Include the hslam_ros Launch -->
-    <include file="$(find hslam_ros)/launch/hslam_live.launch">
+    <!-- <include file="$(find hslam_ros)/launch/hslam_live.launch">
         <arg name="image_topic" value="/camera/color/image_raw" />
         <arg name="calib_file" value="/media/sf_datasets/ficosa_for_hslam/camera_ficosa.txt" />
-        <!-- Add more arguments if needed -->
-    </include>
+    </include> -->
 
     <!-- Include the Image Publisher -->
     <include file="$(find image_publisher)/launch/publish_images.launch">
@@ -13,18 +12,16 @@
         <arg name="publish_rate" value="20" />
     </include>
 
-    <!-- Include the IMU Publisher 
-    <include file="$(find imu_publisher)/launch/publish_imu.launch">
-        <arg name="imu_data_file" value="$(env HOME)/hslam_ros_ws/res/imu0/data.csv" />
-    </include>
-    -->
+
     <!-- Include the GPS Publisher -->
     <include file="$(find gps_publisher)/launch/gps_pulisher.launch">
         <arg name="gps_file_path" value="/media/sf_datasets/ficosa_for_hslam/ficosa_may1/gps_data.csv" />
     </include>
 
-    <!-- Launch Fake Velocity Publisher -->
+    <!-- Launch NSEW marker visualization node -->
     <node pkg="ukf_localization" type="direction_markers.py" name="nsew_publisher" output="screen"/>
+
+
     <!-- Launch Fake Velocity Publisher -->
     <!-- <node pkg="ukf_localization" type="fake_velocity_publisher.py" name="fake_velocity_publisher" output="screen"/> -->
     
@@ -37,9 +34,17 @@
     
     <!-- Include the UKF Node Launch -->
  
-    <include file="$(find ukf_localization)/launch/dual_ekf_navsat_example.launch"/>
+   
+    <!-- <include file="$(find ukf_localization)/launch/dual_ekf_navsat_example.launch"/> -->
+   
+   
+   
     <!-- Include the Transform Publisher -->
-    <!-- <include file="$(find transform_publisher_node)/launch/publish_transforms.launch" /> -->
+     <!--JSON Transform Publisher -->
+    <!-- <node pkg="ukf_localization" type="publish_transforms.py" name="publish_transforms" output="screen">
+        <param name="odom_to_baselink_json" value="$(find ukf_localization)/utils/transformations/No_transformation.json"/>
+        <param name="map_to_odom_json" value="$(find ukf_localization)/utils/transformations/ficosa_transformation.json"/>
+    </node> -->
     <!-- Static Transform Publisher for map -> odom -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0.01257 −0.00216 −1.9514 map odom 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_map_to_odom" args="0 0 0 0 0 0  map odom 100" /> -->
