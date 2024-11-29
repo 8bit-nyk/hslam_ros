@@ -90,6 +90,12 @@
         "**/.build": true,
 
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
     // "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

@@ -1,6 +1,6 @@
 <launch>
-  <arg name="odom_to_baselink_json" default="$(find transform_publisher_node)/src/ficosa_transformation.json"/>
-  <arg name="map_to_odom_json" default="$(find transform_publisher_node)/src/transformation_HSLAM-to-FICOSAtransformed.json"/>
+  <arg name="odom_to_baselink_json" default="$(find transform_publisher_node)/src/No_transformation.json"/>
+  <arg name="map_to_odom_json" default="$(find transform_publisher_node)/src/transformation_HSLAM-to-FICOSARAW.json"/>
 
   <node pkg="transform_publisher_node" type="publish_transforms.py" name="publish_transforms" output="screen">
     <param name="odom_to_baselink_json" value="$(arg odom_to_baselink_json)"/>

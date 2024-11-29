@@ -274,12 +274,12 @@ void publishResults() {
 			odom_msg.twist.twist.angular.y = velocity.so3().log().y();
 			odom_msg.twist.twist.angular.z = velocity.so3().log().z();
 			// Set the covariance for twist
-			odom_msg.twist.covariance = {0.1, 0, 0, 0, 0, 0,
-											0, 0.1, 0, 0, 0, 0,
-											0, 0, 0.1, 0, 0, 0,
-											0, 0, 0, 0.1, 0, 0,
-											0, 0, 0, 0, 0.1, 0,
-											0, 0, 0, 0, 0, 0.1};
+			odom_msg.twist.covariance = {0.01, 0, 0, 0, 0, 0,
+											0, 0.01, 0, 0, 0, 0,
+											0, 0, 0.01, 0, 0, 0,
+											0, 0, 0, 0.01, 0, 0,
+											0, 0, 0, 0, 0.01, 0,
+											0, 0, 0, 0, 0, 0.01};
 		
 
 		}
