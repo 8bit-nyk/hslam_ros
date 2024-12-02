@@ -8,27 +8,31 @@
        The first EKF instance produces the odom->base_link transform. The second EKF produces the map->odom transform,
        but requires the odom->base_link transform from the first instance in order to do so. See the
        params/dual_ukf_navsat_example.yaml file for parameter specification.
+
+       NOTE: Navsat_transfrom uses IMU message only onceto get the tf then unsubscribes from it.
+       Keep in mind that, once navsat_transform_node gets a single usable IMU message, it unsubscribes from the IMU data. 
+       It only needs a single earth-referenced heading measurement.
 -->
 
 <launch>
 
   <!-- <rosparam command="load" file="$(find robot_localization)/params/dual_ukf_navsat_example.yaml" /> -->
     <rosparam command="load" file="$(find ukf_localization)/config/dual_ukf_navsat.yaml" />   
-  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_odom" clear_params="true">
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_odom">
       <remap from="odometry/wheel" to="/hslam/odom"/>
       <remap from="imu/data" to="/gps/imu"/>
       <remap from="odometry/filtered" to="odometry/filtered_local"/>
   </node>
 
-  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_map" clear_params="true">
+  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se_map" >
       <remap from="odometry/wheel" to="/hslam/odom"/>
       <remap from="odometry/filtered" to="odometry/filtered_global"/>
       <remap from="imu/data" to="/gps/imu"/>
   </node> 
 
-  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" clear_params="true"> -->
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" > 
       <remap from="odometry/filtered" to="odometry/filtered_global"/>
-      <remap from="/imu/data" to="/gps/imu"/>
+      <remap from="imu/data" to="/gps/imu"/>
   </node>
 
 </launch>
