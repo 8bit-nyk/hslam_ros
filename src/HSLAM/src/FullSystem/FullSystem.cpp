@@ -995,7 +995,8 @@ void FullSystem::flagPointsForRemoval()
 }
 
 
-void FullSystem::addActiveFrame( ImageAndExposure* image, int id )
+// void FullSystem::addActiveFrame( ImageAndExposure* image, int id )
+void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filtered_pose)
 {
 
     if(isLost) return;
@@ -1020,7 +1021,7 @@ void FullSystem::addActiveFrame( ImageAndExposure* image, int id )
     shell->incoming_id = id;
 	fh->shell = shell;
 	allFrameHistory.push_back(shell);
-
+	shell->setPose(filtered_pose);
 
 	// =========================== make Images / derivatives etc. =========================
 	fh->ab_exposure = image->exposure_time;

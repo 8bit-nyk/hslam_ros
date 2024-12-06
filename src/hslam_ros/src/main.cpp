@@ -54,7 +54,7 @@ ros::Subscriber odom_filtered_sub;
 
 ros::Publisher path_filtered_pub;
 nav_msgs::Path path_filtered;
-
+SE3 filtered_pose;
 void parseArgument(char* arg)
 {
 	int option;
@@ -338,7 +338,8 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 	MinimalImageB minImg((int)cv_ptr->image.cols, (int)cv_ptr->image.rows,(unsigned char*)cv_ptr->image.data);
 	ImageAndExposure* undistImg = undistorter->undistort<unsigned char>(&minImg, 1,0, 1.0f);
 	undistImg->timestamp=img->header.stamp.toSec(); // relay the timestamp to HSLAM
-	fullSystem->addActiveFrame(undistImg, frameID);
+	fullSystem->addActiveFrame(undistImg, frameID, filtered_pose);
+	
 	frameID++;
 	if (frameID>5)
 	{
@@ -371,6 +372,16 @@ void odomFilteredCallback(const nav_msgs::Odometry::ConstPtr& msg)
 
     // Update the header stamp of the path
     path_filtered.header.stamp = ros::Time::now();
+
+	// Extract the pose from the odometry message
+    Eigen::Quaterniond q(msg->pose.pose.orientation.w,
+                         msg->pose.pose.orientation.x,
+                         msg->pose.pose.orientation.y,
+                         msg->pose.pose.orientation.z);
+    Eigen::Vector3d t(msg->pose.pose.position.x,
+                      msg->pose.pose.position.y,
+                      msg->pose.pose.position.z);
+    SE3 filtered_pose(q, t);
 
     // Publish the path
     // path_filtered_pub.publish(path_filtered);
