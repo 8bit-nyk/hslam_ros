@@ -94,9 +94,9 @@ def publish_gps_data(file_path):
             pose_msg.header.frame_id = "map"
             pose_msg.pose.pose.position = Point(x, y, z)
             pose_msg.pose.pose.orientation = Quaternion(*quaternion)
-            pose_msg.pose.covariance = [0.5, 0, 0, 0, 0, 0,
-                                        0, 0.5, 0, 0, 0, 0,
-                                        0, 0, 0.5, 0, 0, 0,
+            pose_msg.pose.covariance = [0.2, 0, 0, 0, 0, 0,
+                                        0, 0.2, 0, 0, 0, 0,
+                                        0, 0, 0.2, 0, 0, 0,
                                         0, 0, 0, 0.5, 0, 0,
                                         0, 0, 0, 0, 0.5, 0,
                                         0, 0, 0, 0, 0, 0.5]

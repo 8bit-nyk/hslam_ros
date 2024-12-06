@@ -50,6 +50,10 @@ ros::Publisher map_pub ;
 ros::Publisher pose_pub ;
 ros::Publisher path_pub ;
 ros::Publisher odom_pub;
+ros::Subscriber odom_filtered_sub;
+
+ros::Publisher path_filtered_pub;
+nav_msgs::Path path_filtered;
 
 void parseArgument(char* arg)
 {
@@ -254,9 +258,9 @@ void publishResults() {
 			pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
 											0, 0.1, 0, 0, 0, 0,
 											0, 0, 0.1, 0, 0, 0,
-											0, 0, 0, 0.1, 0, 0,
-											0, 0, 0, 0, 0.1, 0,
-											0, 0, 0, 0, 0, 0.1};// Populate the Path message
+											0, 0, 0, 0.5, 0, 0,
+											0, 0, 0, 0, 0.5, 0,
+											0, 0, 0, 0, 0, 0.5};// Populate the Path message
 			// path.poses.push_back(pose_stamped.pose);
 			// Convert PoseWithCovarianceStamped to PoseStamped for path
 			pose_stamped_msg.header = pose_stamped.header;
@@ -290,6 +294,9 @@ void publishResults() {
 		odom_pub.publish(odom_msg);
 		path_pub.publish(path);
 		pose_pub.publish(pose_stamped);
+		
+		// Publish the path
+    	path_filtered_pub.publish(path_filtered);
 
 		map_points=fullSystem->getMap();
 		for (size_t i = 0; i < map_points.size(); i++)
@@ -305,7 +312,6 @@ void publishResults() {
 		map_pub.publish(map);
     
 }
-
 
 
 
@@ -352,6 +358,23 @@ void interruptHandler(int signal)
 	    interrupted = true;
 }
 
+void odomFilteredCallback(const nav_msgs::Odometry::ConstPtr& msg)
+{
+    // Process the received odometry message
+	// Create a PoseStamped message from the odometry message
+    geometry_msgs::PoseStamped pose_stamped;
+    pose_stamped.header = msg->header;
+    pose_stamped.pose = msg->pose.pose;
+
+    // Add the new pose to the path
+    path_filtered.poses.push_back(pose_stamped);
+
+    // Update the header stamp of the path
+    path_filtered.header.stamp = ros::Time::now();
+
+    // Publish the path
+    // path_filtered_pub.publish(path_filtered);
+}
 
 
 //boost exit handler to exit all threads
@@ -422,10 +445,18 @@ int main( int argc, char** argv )
     ros::NodeHandle nh;
 	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
+	// Initialize subscriber
+    odom_filtered_sub = nh.subscribe("/odometry/filtered_global", 10, odomFilteredCallback);
 	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam/map", 20);
 	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam/pose", 20);
 	path_pub = nh.advertise<nav_msgs::Path>("/hslam/path", 20);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("/hslam/odom", 20);
+
+	path_filtered_pub = nh.advertise<nav_msgs::Path>("/hslam/path_filtered", 20);
+	 // Initialize path_filtered
+    path_filtered.header.frame_id = "odom";
+
+
 
     //NA: replacing ros_spin with interruptable sequence
     //ros::spin();
@@ -433,7 +464,7 @@ int main( int argc, char** argv )
     signal(SIGINT, interruptHandler);
 
 	while (ros::ok() && !interrupted) //&& frameID <999999 NA
-		{	
+		{
 			//printf("ROS IS OKAY!");
 			//printf("FrameID: %d ",frameID);
 			ros::spinOnce();
