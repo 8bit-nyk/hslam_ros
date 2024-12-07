@@ -320,7 +320,6 @@ void FullSystem::printResult(std::string file, bool printSim)
 		if(setting_onlyLogKFPoses && s->marginalizedAt == s->id) 
 			continue;
 		SE3 Twc = s->getPose();
-		// Twc = s->getPose();
 
 		myfile << s->timestamp <<
 			" " << Twc.translation().transpose()<<
@@ -1019,9 +1018,14 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
 	shell->marginalizedAt = shell->id = allFrameHistory.size();
     shell->timestamp = image->timestamp;
     shell->incoming_id = id;
+	
+	shell->setPose(filtered_pose);
+	printf("Shell pose %d\n", shell->getPose());
+
+
 	fh->shell = shell;
 	allFrameHistory.push_back(shell);
-	shell->setPose(filtered_pose);
+	
 
 	// =========================== make Images / derivatives etc. =========================
 	fh->ab_exposure = image->exposure_time;
@@ -1144,10 +1148,11 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
 		}
 
 		//if frame succesfully tracked, update global motion model and set it to become the reference frame for the next frame
-
+		// shell->setPose(filtered_pose);
 		Velocity = shell->getPoseInverse() * mLastFrame->fs->getPose(); //currentTcw * LastTwc
 		// vVelocity.push(Velocity);
 
+		
 		mLastFrame = shell->frame;
 
 

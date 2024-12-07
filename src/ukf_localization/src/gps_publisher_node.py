@@ -16,7 +16,7 @@ def publish_gps_data(file_path):
     imu_pub = rospy.Publisher('/gps/imu', Imu, queue_size=10)
     
     rospy.init_node('gps_publisher_node', anonymous=True)
-    rate = rospy.Rate(30)  # Publish at 10 Hz
+    rate = rospy.Rate(100)  # Publish at 10 Hz
 
     # Create a Path message
     path_msg = Path()

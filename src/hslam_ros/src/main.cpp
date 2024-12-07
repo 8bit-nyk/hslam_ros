@@ -294,7 +294,12 @@ void publishResults() {
 		odom_pub.publish(odom_msg);
 		path_pub.publish(path);
 		pose_pub.publish(pose_stamped);
-		
+		//Write to file
+		std::ofstream outfile;
+		outfile.open("/home/nykvm/hslam_ros_ws/results/hslam_result.txt", std::ios_base::app);
+		outfile << pose_stamped.header.stamp << " " << pose_stamped.pose.pose.position.x << " " << pose_stamped.pose.pose.position.y << " " << pose_stamped.pose.pose.position.z << " " << 
+		pose_stamped.pose.pose.orientation.x << " " << pose_stamped.pose.pose.orientation.y << " " << pose_stamped.pose.pose.orientation.z << " " << pose_stamped.pose.pose.orientation.w << std::endl;
+		outfile.close();
 		// Publish the path
     	path_filtered_pub.publish(path_filtered);
 
@@ -382,6 +387,11 @@ void odomFilteredCallback(const nav_msgs::Odometry::ConstPtr& msg)
                       msg->pose.pose.position.y,
                       msg->pose.pose.position.z);
     SE3 filtered_pose(q, t);
+	//Write results to files
+	std::ofstream outfile;
+	outfile.open("/home/nykvm/hslam_ros_ws/results/filtered_result.txt", std::ios_base::app);
+	outfile << pose_stamped.header.stamp << " " << t[0] << " " << t[1] << " " << t[2] << " " << q.x() << " " << q.y() << " " << q.z()<< " " << q.w() << std::endl;
+	outfile.close();
 
     // Publish the path
     // path_filtered_pub.publish(path_filtered);
@@ -521,7 +531,8 @@ int main( int argc, char** argv )
 	fullSystem->BAatExit();
 			
 	
-	fullSystem->printResult("result.txt"); 
+	std::string resultFilePath = "/home/nykvm/hslam_ros_ws/results/result.txt";
+	fullSystem->printResult(resultFilePath.c_str()); 
 	fullSystem->saveMap("map.pcd"); 
 
 	//if(viewer != 0)
