@@ -7,6 +7,7 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Point, Qua
 from nav_msgs.msg import Path
 from sensor_msgs.msg import NavSatFix, Imu
 import tf
+from datetime import datetime
 
 def publish_gps_data(file_path):
     # Initialize publishers
@@ -20,7 +21,7 @@ def publish_gps_data(file_path):
 
     # Create a Path message
     path_msg = Path()
-    path_msg.header.frame_id = "map"
+    path_msg.header.frame_id = "base_link"
 
     with open(file_path, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
@@ -39,26 +40,20 @@ def publish_gps_data(file_path):
             roll = float(row[-3]) # heading in file
             pitch = float(row[-2])  # pitch in file
             yaw = float(row[-1])  #Yaw ,roll in file
-
-            # # Convert from from X-forward Y-right Z-down to Y-forward X-right z-up which should give ENU
-            # transformed_roll = pitch  # New roll = old pitch
-            # transformed_pitch = -roll  # New pitch = -old roll
-            # transformed_yaw = yaw - 90  # Shift yaw for ENU frame (Y-forward)
-
-            # if transformed_yaw < 0:
-            #     transformed_yaw += 360  # Wrap around to 0-360°
-
-            # # Convert transformed Euler angles to quaternion
-            # quaternion = tf.transformations.quaternion_from_euler(
-            #     math.radians(transformed_roll),
-            #     math.radians(transformed_pitch),
-            #     math.radians(transformed_yaw)
-            #     )
-            # Correct yaw for ENU frame
-            # corrected_yaw = yaw - 90  # Shift from North-referenced to East-referenced
-            # if corrected_yaw < 0:
-            #     corrected_yaw += 360  # Wrap around to 0-360° if negative
-
+            
+            # Timestamp
+            timestamp = int(row[-7])  # Timestamp
+             # Split timestamp into seconds and nanoseconds
+            # Convert to seconds and nanoseconds
+            # secs = int(timestamp // 1_000_000_000)  # Integer division to get seconds
+            # usecs = int(timestamp % 1_000_000_000 // 1_000 ) # Remainder to get nanoseconds
+            # nsecs = usecs * 1_000
+            secs = timestamp // 1_000_000  # Seconds part
+            nsecs = timestamp % 1_000_000  # Nanoseconds part
+            # Debugging to verify results
+            # print(f"Raw timestamp: {timestamp}")
+            # print(f"Seconds: {secs}")
+            # print(f"Nanoseconds: {nsecs}")
             # Convert corrected yaw, pitch, and roll to quaternion
             quaternion = tf.transformations.quaternion_from_euler(
                 math.radians(roll), math.radians(pitch), math.radians(yaw)#corrected_yaw
@@ -66,7 +61,7 @@ def publish_gps_data(file_path):
        
             # Publish NavSatFix message
             navsat_msg = NavSatFix()
-            navsat_msg.header.stamp = rospy.Time.now()
+            navsat_msg.header.stamp = rospy.Time(secs, nsecs)
             navsat_msg.header.frame_id = "map"
             navsat_msg.latitude = latitude
             navsat_msg.longitude = longitude
@@ -79,9 +74,9 @@ def publish_gps_data(file_path):
 
             # Publish Imu message with yaw
             imu_msg = Imu()
-            imu_msg.header.stamp = rospy.Time.now()
-            imu_msg.header.frame_id = "base_link"
-            # imu_msg.child_frame_id = "base_link"
+            imu_msg.header.stamp = rospy.Time(secs, nsecs)
+            imu_msg.header.frame_id = "map"
+            # imu_msg.child_frame_id = "map"
             imu_msg.orientation = Quaternion(*quaternion)
             imu_msg.orientation_covariance = [0.03, 0, 0,
                                             0, 0.03, 0, 
@@ -90,16 +85,16 @@ def publish_gps_data(file_path):
 
             # Publish PoseWithCovarianceStamped message
             pose_msg = PoseWithCovarianceStamped()
-            pose_msg.header.stamp = rospy.Time.now()
+            pose_msg.header.stamp = rospy.Time(secs, nsecs)
             pose_msg.header.frame_id = "map"
             pose_msg.pose.pose.position = Point(x, y, z)
             pose_msg.pose.pose.orientation = Quaternion(*quaternion)
-            pose_msg.pose.covariance = [0.2, 0, 0, 0, 0, 0,
-                                        0, 0.2, 0, 0, 0, 0,
-                                        0, 0, 0.2, 0, 0, 0,
-                                        0, 0, 0, 0.5, 0, 0,
-                                        0, 0, 0, 0, 0.5, 0,
-                                        0, 0, 0, 0, 0, 0.5]
+            pose_msg.pose.covariance = [0.02, 0, 0, 0, 0, 0,
+                                        0, 0.02, 0, 0, 0, 0,
+                                        0, 0, 0.02, 0, 0, 0,
+                                        0, 0, 0, 0.03, 0, 0,
+                                        0, 0, 0, 0, 0.03, 0,
+                                        0, 0, 0, 0, 0, 0.1]
             pose_pub.publish(pose_msg)
 
             # Update Path message

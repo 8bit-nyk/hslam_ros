@@ -50,11 +50,15 @@ ros::Publisher map_pub ;
 ros::Publisher pose_pub ;
 ros::Publisher path_pub ;
 ros::Publisher odom_pub;
-ros::Subscriber odom_filtered_sub;
+ros::Subscriber correction_sub;
 
 ros::Publisher path_filtered_pub;
 nav_msgs::Path path_filtered;
+
+//declare the new psoe as a global variable
 SE3 filtered_pose;
+
+
 void parseArgument(char* arg)
 {
 	int option;
@@ -224,7 +228,7 @@ int frameID = 0;
 
 
 
-void publishResults() {        
+void publishResults(double timestamp) {        
 		nav_msgs::Path path;
 		nav_msgs::Odometry odom_msg;
 		geometry_msgs::PoseWithCovarianceStamped pose_stamped;
@@ -240,9 +244,9 @@ void publishResults() {
 		
 		path.header.frame_id="odom";
 		pose_stamped.header.frame_id="odom";
-		pose_stamped.header.stamp = ros::Time::now();
+		pose_stamped.header.stamp = ros::Time(timestamp);
 		// Populate the Odometry message
-		odom_msg.header.stamp = ros::Time::now();
+		odom_msg.header.stamp = ros::Time(timestamp);
 		odom_msg.header.frame_id = "odom";
 		odom_msg.child_frame_id = "base_link";
 		
@@ -348,7 +352,7 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 	frameID++;
 	if (frameID>5)
 	{
-	publishResults();
+	publishResults(img->header.stamp.toSec());
 	}
 	
 	delete undistImg;
@@ -364,29 +368,29 @@ void interruptHandler(int signal)
 	    interrupted = true;
 }
 
-void odomFilteredCallback(const nav_msgs::Odometry::ConstPtr& msg)
+void correctedPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     // Process the received odometry message
 	// Create a PoseStamped message from the odometry message
     geometry_msgs::PoseStamped pose_stamped;
     pose_stamped.header = msg->header;
-    pose_stamped.pose = msg->pose.pose;
+    pose_stamped.pose = msg->pose;
 
     // Add the new pose to the path
     path_filtered.poses.push_back(pose_stamped);
 
     // Update the header stamp of the path
-    path_filtered.header.stamp = ros::Time::now();
+    path_filtered.header = msg->header;
 
 	// Extract the pose from the odometry message
-    Eigen::Quaterniond q(msg->pose.pose.orientation.w,
-                         msg->pose.pose.orientation.x,
-                         msg->pose.pose.orientation.y,
-                         msg->pose.pose.orientation.z);
-    Eigen::Vector3d t(msg->pose.pose.position.x,
-                      msg->pose.pose.position.y,
-                      msg->pose.pose.position.z);
-    SE3 filtered_pose(q, t);
+    Eigen::Quaterniond q(msg->pose.orientation.w,
+                         msg->pose.orientation.x,
+                         msg->pose.orientation.y,
+                         msg->pose.orientation.z);
+    Eigen::Vector3d t(msg->pose.position.x,
+                      msg->pose.position.y,
+                      msg->pose.position.z);
+    filtered_pose = SE3(q, t);
 	//Write results to files
 	std::ofstream outfile;
 	outfile.open("/home/nykvm/hslam_ros_ws/results/filtered_result.txt", std::ios_base::app);
@@ -467,13 +471,13 @@ int main( int argc, char** argv )
 	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 	// Initialize subscriber
-    odom_filtered_sub = nh.subscribe("/odometry/filtered_global", 10, odomFilteredCallback);
+    correction_sub = nh.subscribe("/hslam/gps_pose_in_hslam", 20, correctedPoseCallback);
 	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam/map", 20);
 	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam/pose", 20);
 	path_pub = nh.advertise<nav_msgs::Path>("/hslam/path", 20);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("/hslam/odom", 20);
 
-	path_filtered_pub = nh.advertise<nav_msgs::Path>("/hslam/path_filtered", 20);
+	path_filtered_pub = nh.advertise<nav_msgs::Path>("/hslam/path_trans_gpsinhslam", 20);
 	 // Initialize path_filtered
     path_filtered.header.frame_id = "odom";
 
