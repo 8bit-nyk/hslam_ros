@@ -17,7 +17,7 @@
       <arg name="noLog" default="false" />
 
       <!-- hslam_live Node -->
-      <node name="hslam_live" pkg="hslam_ros" type="hslam_live" output="screen" required="true"
+      <node name="hslam_live" pkg="hslam_ros" type="hslam_live" required="true"
           args="image:=$(arg image_topic) calib=$(arg calib_file) gamma=$(arg gamma_file) vignette=$(arg vignette_file) mode=$(arg mode) preset=$(arg preset)" >
       </node>
     <!-- <include file="$(find image_publisher)/launch/publish_images.launch">

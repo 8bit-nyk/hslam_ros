@@ -178,14 +178,14 @@ private:
 	double linAllPointSinle(PointHessian* point, float outlierTHSlack, bool plot);
 
 	// mainPipelineFunctions
-	Vec5 trackNewCoarse(FrameHessian *fh, bool writePose = false);
+	Vec5 trackNewCoarse(FrameHessian *fh, bool writePose = false, const SE3& transformed_gps_pose = SE3());
 	void traceNewCoarse(FrameHessian* fh);
 	void activatePoints();
 	void activatePointsMT();
 	void activatePointsOldFirst();
 	void flagPointsForRemoval();
 	void makeNewTraces(FrameHessian* newFrame, float* gtDepth);
-	void initializeFromInitializer(FrameHessian* newFrame);
+	void initializeFromInitializer(FrameHessian* newFrame, const SE3& transformed_gps_pose);	
 	void flagFramesForMarginalization(FrameHessian* newFH);
 
 

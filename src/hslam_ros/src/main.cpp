@@ -28,7 +28,6 @@ Based on and inspired by DSO project by Jakob Engel
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include "cv_bridge/cv_bridge.h"
 #include <sensor_msgs/PointCloud2.h>
 #include <nav_msgs/Path.h>
@@ -50,13 +49,13 @@ ros::Publisher map_pub ;
 ros::Publisher pose_pub ;
 ros::Publisher path_pub ;
 ros::Publisher odom_pub;
-ros::Subscriber correction_sub;
+ros::Subscriber transformed_gps_sub;
 
-ros::Publisher path_filtered_pub;
-nav_msgs::Path path_filtered;
+ros::Publisher path_transformed_gps_pub;
+nav_msgs::Path path_transformed_gps;
 
 //declare the new psoe as a global variable
-SE3 filtered_pose;
+SE3 transformed_gps_pose;
 
 
 void parseArgument(char* arg)
@@ -231,8 +230,7 @@ int frameID = 0;
 void publishResults(double timestamp) {        
 		nav_msgs::Path path;
 		nav_msgs::Odometry odom_msg;
-		geometry_msgs::PoseWithCovarianceStamped pose_stamped;
-		geometry_msgs::PoseStamped pose_stamped_msg;
+		geometry_msgs::PoseStamped pose_stamped;
 		sensor_msgs::PointCloud2 map;
 		pcl::PointCloud<pcl::PointXYZ> cloud;
 
@@ -252,42 +250,31 @@ void publishResults(double timestamp) {
 		
 		for (size_t i = 0; i < points.size(); i++)
 		{
-			pose_stamped.pose.pose.position.x=points[i].translation().x();
-			pose_stamped.pose.pose.position.y=points[i].translation().y();
-			pose_stamped.pose.pose.position.z=points[i].translation().z();
-			pose_stamped.pose.pose.orientation.x=points[i].so3().unit_quaternion().x();
-			pose_stamped.pose.pose.orientation.y=points[i].so3().unit_quaternion().y();
-			pose_stamped.pose.pose.orientation.z=points[i].so3().unit_quaternion().z();
-			pose_stamped.pose.pose.orientation.w=points[i].so3().unit_quaternion().w();
-			pose_stamped.pose.covariance = {0.1, 0, 0, 0, 0, 0,
-											0, 0.1, 0, 0, 0, 0,
-											0, 0, 0.1, 0, 0, 0,
-											0, 0, 0, 0.5, 0, 0,
-											0, 0, 0, 0, 0.5, 0,
-											0, 0, 0, 0, 0, 0.5};// Populate the Path message
-			// path.poses.push_back(pose_stamped.pose);
-			// Convert PoseWithCovarianceStamped to PoseStamped for path
-			pose_stamped_msg.header = pose_stamped.header;
-			pose_stamped_msg.pose = pose_stamped.pose.pose;
-			path.poses.push_back(pose_stamped_msg);
+			pose_stamped.pose.position.x=points[i].translation().x();
+			pose_stamped.pose.position.y=points[i].translation().y();
+			pose_stamped.pose.position.z=points[i].translation().z();
+			pose_stamped.pose.orientation.x=points[i].so3().unit_quaternion().x();
+			pose_stamped.pose.orientation.y=points[i].so3().unit_quaternion().y();
+			pose_stamped.pose.orientation.z=points[i].so3().unit_quaternion().z();
+			pose_stamped.pose.orientation.w=points[i].so3().unit_quaternion().w();
+			path.poses.push_back(pose_stamped);
 
-			// Populate the Odometry message
-			// Directly assign pose (position, orientation and covariance) from PoseWithCovarianceStamped to Odometry message
-    		odom_msg.pose = pose_stamped.pose;
-			// Retrieve and set the twist (linear and angular velocity)
-			odom_msg.twist.twist.linear.x = velocity.translation().x();
-			odom_msg.twist.twist.linear.y = velocity.translation().y();
-			odom_msg.twist.twist.linear.z = velocity.translation().z();
-			odom_msg.twist.twist.angular.x = velocity.so3().log().x();
-			odom_msg.twist.twist.angular.y = velocity.so3().log().y();
-			odom_msg.twist.twist.angular.z = velocity.so3().log().z();
-			// Set the covariance for twist
-			odom_msg.twist.covariance = {0.01, 0, 0, 0, 0, 0,
-											0, 0.01, 0, 0, 0, 0,
-											0, 0, 0.01, 0, 0, 0,
-											0, 0, 0, 0.01, 0, 0,
-											0, 0, 0, 0, 0.01, 0,
-											0, 0, 0, 0, 0, 0.01};
+			// // Populate the Odometry message
+    		// odom_msg.pose = pose_stamped;
+			// // Retrieve and set the twist (linear and angular velocity)
+			// odom_msg.twist.twist.linear.x = velocity.translation().x();
+			// odom_msg.twist.twist.linear.y = velocity.translation().y();
+			// odom_msg.twist.twist.linear.z = velocity.translation().z();
+			// odom_msg.twist.twist.angular.x = velocity.so3().log().x();
+			// odom_msg.twist.twist.angular.y = velocity.so3().log().y();
+			// odom_msg.twist.twist.angular.z = velocity.so3().log().z();
+			// // Set the covariance for twist
+			// odom_msg.twist.covariance = {0.01, 0, 0, 0, 0, 0,
+			// 								0, 0.01, 0, 0, 0, 0,
+			// 								0, 0, 0.01, 0, 0, 0,
+			// 								0, 0, 0, 0.01, 0, 0,
+			// 								0, 0, 0, 0, 0.01, 0,
+			// 								0, 0, 0, 0, 0, 0.01};
 		
 
 		}
@@ -301,11 +288,11 @@ void publishResults(double timestamp) {
 		//Write to file
 		std::ofstream outfile;
 		outfile.open("/home/nykvm/hslam_ros_ws/results/hslam_result.txt", std::ios_base::app);
-		outfile << pose_stamped.header.stamp << " " << pose_stamped.pose.pose.position.x << " " << pose_stamped.pose.pose.position.y << " " << pose_stamped.pose.pose.position.z << " " << 
-		pose_stamped.pose.pose.orientation.x << " " << pose_stamped.pose.pose.orientation.y << " " << pose_stamped.pose.pose.orientation.z << " " << pose_stamped.pose.pose.orientation.w << std::endl;
+		outfile << pose_stamped.header.stamp << " " << pose_stamped.pose.position.x << " " << pose_stamped.pose.position.y << " " << pose_stamped.pose.position.z << " " << 
+		pose_stamped.pose.orientation.x << " " << pose_stamped.pose.orientation.y << " " << pose_stamped.pose.orientation.z << " " << pose_stamped.pose.orientation.w << std::endl;
 		outfile.close();
 		// Publish the path
-    	path_filtered_pub.publish(path_filtered);
+    	path_transformed_gps_pub.publish(path_transformed_gps);
 
 		map_points=fullSystem->getMap();
 		for (size_t i = 0; i < map_points.size(); i++)
@@ -346,8 +333,13 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 
 	MinimalImageB minImg((int)cv_ptr->image.cols, (int)cv_ptr->image.rows,(unsigned char*)cv_ptr->image.data);
 	ImageAndExposure* undistImg = undistorter->undistort<unsigned char>(&minImg, 1,0, 1.0f);
+	// std::cout << "Type of img->header.stamp: " << typeid(img->header.stamp).name() << std::endl;
+	// std::cout << "ROS Time secs: " << img->header.stamp.sec << std::endl;
+	// std::cout << "ROS Time nsecs: " << img->header.stamp.nsec << std::endl;
+	// std::cout << "ROS Time in seconds (toSec): " << img->header.stamp.toSec() << std::endl;
+
 	undistImg->timestamp=img->header.stamp.toSec(); // relay the timestamp to HSLAM
-	fullSystem->addActiveFrame(undistImg, frameID, filtered_pose);
+	fullSystem->addActiveFrame(undistImg, frameID, transformed_gps_pose);
 	
 	frameID++;
 	if (frameID>5)
@@ -368,7 +360,7 @@ void interruptHandler(int signal)
 	    interrupted = true;
 }
 
-void correctedPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+void transformedPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     // Process the received odometry message
 	// Create a PoseStamped message from the odometry message
@@ -377,20 +369,21 @@ void correctedPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     pose_stamped.pose = msg->pose;
 
     // Add the new pose to the path
-    path_filtered.poses.push_back(pose_stamped);
+    path_transformed_gps.poses.push_back(pose_stamped);
 
     // Update the header stamp of the path
-    path_filtered.header = msg->header;
+    path_transformed_gps.header = msg->header;
 
-	// Extract the pose from the odometry message
+	// Extract the pose from the received message
     Eigen::Quaterniond q(msg->pose.orientation.w,
                          msg->pose.orientation.x,
                          msg->pose.orientation.y,
                          msg->pose.orientation.z);
+						 
     Eigen::Vector3d t(msg->pose.position.x,
                       msg->pose.position.y,
                       msg->pose.position.z);
-    filtered_pose = SE3(q, t);
+    transformed_gps_pose = SE3(q, t);
 	//Write results to files
 	std::ofstream outfile;
 	outfile.open("/home/nykvm/hslam_ros_ws/results/filtered_result.txt", std::ios_base::app);
@@ -398,7 +391,7 @@ void correctedPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 	outfile.close();
 
     // Publish the path
-    // path_filtered_pub.publish(path_filtered);
+    // path_transformed_gps_pub.publish(path_transformed_gps);
 }
 
 
@@ -471,15 +464,15 @@ int main( int argc, char** argv )
 	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 	// Initialize subscriber
-    correction_sub = nh.subscribe("/hslam/gps_pose_in_hslam", 20, correctedPoseCallback);
+    transformed_gps_sub = nh.subscribe("/transformed_gps_pose", 20, transformedPoseCallback);
 	map_pub = nh.advertise<sensor_msgs::PointCloud2>("/hslam/map", 20);
-	pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/hslam/pose", 20);
+	pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/hslam/pose", 20);
 	path_pub = nh.advertise<nav_msgs::Path>("/hslam/path", 20);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("/hslam/odom", 20);
 
-	path_filtered_pub = nh.advertise<nav_msgs::Path>("/hslam/path_trans_gpsinhslam", 20);
-	 // Initialize path_filtered
-    path_filtered.header.frame_id = "odom";
+	path_transformed_gps_pub = nh.advertise<nav_msgs::Path>("/hslam/path_transformed_gps", 20);
+	 // Initialize path_transformed_gps
+    path_transformed_gps.header.frame_id = "odom";
 
 
 

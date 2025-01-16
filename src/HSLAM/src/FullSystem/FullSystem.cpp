@@ -397,7 +397,7 @@ SE3 FullSystem::getVelocity() const {
     return Velocity;
 }
 
-Vec5 FullSystem::trackNewCoarse(FrameHessian* fh, bool writePose)
+Vec5 FullSystem::trackNewCoarse(FrameHessian* fh, bool writePose, const SE3& transformed_gps_pose)
 {
 
 	assert(allFrameHistory.size() > 0);
@@ -995,10 +995,10 @@ void FullSystem::flagPointsForRemoval()
 
 
 // void FullSystem::addActiveFrame( ImageAndExposure* image, int id )
-void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filtered_pose)
+void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& transformed_gps_pose)
 {
 
-    if(isLost) return;
+   // if(isLost) return;
 	boost::unique_lock<boost::mutex> lock(trackMutex);
 
 	// =========================== add into allFrameHistory =========================
@@ -1019,9 +1019,6 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
     shell->timestamp = image->timestamp;
     shell->incoming_id = id;
 	
-	shell->setPose(filtered_pose);
-	printf("Shell pose %d\n", shell->getPose());
-
 
 	fh->shell = shell;
 	allFrameHistory.push_back(shell);
@@ -1032,19 +1029,27 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
     fh->makeImages(image->image, &Hcalib);
 
 
-
+	// =========================== set pose =========================
+	if(isLost)
+	{
+		printf("Visual SLAM Lost! Recovering pose from GPS\n");
+		// Set the new pose
+		shell->setPose(transformed_gps_pose);
+		return;
+	} 
+	
+	
 	if(!initialized)
 	{
 		// use initializer!
 		if(coarseInitializer->frameID<0)	// first frame set. fh is kept by coarseInitializer.
 		{
-
 			coarseInitializer->setFirst(&Hcalib, fh);
+			
 		}
 		else if(coarseInitializer->trackFrame(fh, outputWrapper))	// if SNAPPED
 		{
-
-			initializeFromInitializer(fh);
+			initializeFromInitializer(fh, transformed_gps_pose);
 			lock.unlock();
 			deliverTrackedFrame(fh, true);
 		}
@@ -1072,6 +1077,8 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
 		// Velocity = cumulativeForm();
 		
 		shell->setPose(mLastFrame->fs->getPose() * Velocity.inverse()); //Velocity * LastFrameTcw
+		
+
 		nIndmatches = 0;
 		isUsable = false;
 		bool computedBoW = false;
@@ -1106,7 +1113,7 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
 
 
 		//perform joint optimization here
-		Vec5 tres = trackNewCoarse(fh, ! (isUsable && computedBoW) );
+		Vec5 tres = trackNewCoarse(fh, ! (isUsable && computedBoW));
 		
 
 		int nFrametoLocalMapMatches = SearchLocalPoints(shell->frame);
@@ -1148,15 +1155,41 @@ void FullSystem::addActiveFrame(ImageAndExposure* image, int id, const SE3& filt
 		}
 
 		//if frame succesfully tracked, update global motion model and set it to become the reference frame for the next frame
-		// shell->setPose(filtered_pose);
 		Velocity = shell->getPoseInverse() * mLastFrame->fs->getPose(); //currentTcw * LastTwc
 		// vVelocity.push(Velocity);
 
+		// if (shell->id >= 50)
+		// {
+		// // // 	// Define the translation increment
+		// // // 	// Eigen::Vector3d translationIncrement(0.1, 0.0, 0.0);
+		// // // 	// Eigen::Matrix3d rotationX = Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()).toRotationMatrix();
+
+		// // // 	// SE3 translationTransform(Eigen::Matrix3d::Identity(), translationIncrement);
+		// // // 	// // SE3 rotationTransform(rotationX, Eigen::Vector3d::Zero());
+		// // // 	// // Get the current pose of the shell
+		// // // 	// SE3 currentPose = shell->getPose();
+
+		// // // 	// Apply the translation increment to the current pose
+		// // // 	// SE3 newPose = currentPose * translationTransform;
+		// // // 	//std::cout << "Current Shell pose before change: " << std::endl << shell->getPose().matrix() << std::endl;
+
+		// // // 	// Set the new pose
+		// 	// shell->setPose(transformed_gps_pose);
+
+		// // // 	//std::cout << "Pose After implementing change: " << std::endl << shell->getPose().matrix() << std::endl;
+	
+		// }
+		// shell->setPose( transformed_gps_pose);
 		
+		if (shell->id >= 500 && shell->id < 550)
+		{
+			shell->setPose(transformed_gps_pose);
+			// * Velocity.inverse());
+		}
+		
+
 		mLastFrame = shell->frame;
-
-
-
+	
 		for (IOWrap::Output3DWrapper *ow : outputWrapper)
 		{
 			ow->publishCamPose(fh->shell, &Hcalib);
@@ -1490,7 +1523,7 @@ void FullSystem::makeKeyFrame( FrameHessian* fh)
 }
 
 
-void FullSystem::initializeFromInitializer(FrameHessian* newFrame)
+void FullSystem::initializeFromInitializer(FrameHessian* newFrame,  const SE3& transformed_gps_pose)
 {
 	boost::unique_lock<boost::mutex> lock(mapMutex);
 
@@ -1541,6 +1574,9 @@ void FullSystem::initializeFromInitializer(FrameHessian* newFrame)
 	{
 		// boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
 		firstFrame->shell->setPose(SE3());
+		// firstFrame->shell->setPose(transformed_gps_pose);
+		//TODO-NA - set the pose of the newFame frame to the GPS pose
+
 		firstFrame->shell->aff_g2l = AffLight(0,0);
 		firstFrame->setEvalPT_scaled(firstFrame->shell->getPose().inverse(),firstFrame->shell->aff_g2l);
 		firstFrame->shell->setPoseOpti(Sim3(firstFrame->shell->getPoseInverse().matrix()));
