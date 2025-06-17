@@ -1,5 +1,5 @@
 # ROS wrapper for H-SLAM (Hybrid Visual Simultaneous Localization and Mapping).
-
+### This is an outdated version of the HSLAM project, for the most recent development repository please refer to [HSLAM Dev](https://github.com/8bit-nyk/hslam_ros2)
 Easy-to-deploy ROS implementation, of a Visual SLAM application that leverages both direct and indirect methods.
 
 For an easier "out-of-the-box" Visual SLAM system leveraging docker refer to this [HSLAM Docker Repo](https://github.com/8bit-nyk/hslam_ros_docker) .
