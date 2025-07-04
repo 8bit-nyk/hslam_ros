@@ -1,29 +1,42 @@
 # ROS wrapper for H-SLAM (Hybrid Visual Simultaneous Localization and Mapping).
 ### This is an outdated version of the HSLAM project, for the most recent development repository please refer to [HSLAM Dev](https://github.com/8bit-nyk/hslam_ros2)
-Easy-to-deploy ROS implementation, of a Visual SLAM application that leverages both direct and indirect methods.
+Easy-to-deploy ROS implementation, of a Visual SLAM application that leverages both direct and indirect visual feature tracking methods.
 
-For an easier "out-of-the-box" Visual SLAM system leveraging docker refer to this [HSLAM Docker Repo](https://github.com/8bit-nyk/hslam_ros_docker) .
+For an easier "out-of-the-box" Visual SLAM system leveraging docker refer to this [HSLAM Docker](https://github.com/8bit-nyk/hslam_ros_docker) .
 
-For the base implementation that runs on datasets refer to this [HSLAM Repo](https://github.com/8bit-nyk/HSLAM)
-
+For the base implementation that runs on datasets refer to this [HSLAM OG](https://github.com/8bit-nyk/HSLAM)
 
 
 ### Related Publications:
-[A Unified Hybrid Formulation for Visual SLAM](https://scholarworks.aub.edu.lb/bitstream/handle/10938/22253/YounesGeorges_2021.pdf?sequence=5) (Doctoral dissertation), Younes, G. (2021).
-
-[H-SLAM: Hybrid Direct-Indirect Visual SLAM](https://doi.org/10.1016/j.robot.2024.104729)  Younes, G. et al (2024).
 
 Please cite the paper if used in an academic context.
-```
-@article{younes2024h,
-  title={H-SLAM: Hybrid direct-indirect visual SLAM},
-  author={Younes, Georges and Khalil, Douaa and Zelek, John and Asmar, Daniel},
-  journal={Robotics and Autonomous Systems},
-  pages={104729},
-  year={2024},
-  publisher={Elsevier}
-}
 
+[H-SLAM: Hybrid direct--indirect visual SLAM](https://doi.org/10.1016/j.robot.2024.104729)
+ ```bibtex
+    @article{younes2024h,
+    title={H-SLAM: Hybrid direct--indirect visual SLAM},
+    author={Younes, Georges and Khalil, Douaa and Zelek, John and Asmar, Daniel},
+    journal={Robotics and Autonomous Systems},
+    volume={179},
+    pages={104729},
+    year={2024},
+    publisher={Elsevier}
+    }
+ ```
+#### Other Related Works
+
+[Inline Photometrically Calibrated Hybrid Visual SLAM](https://doi.org/10.1109/IROS58592.2024.10802153)
+
+
+```bibtex
+@inproceedings{abboud2024inline,
+  title={Inline Photometrically Calibrated Hybrid Visual SLAM},
+  author={Abboud, Nicolas and Sayour, Malak and Elhajj, Imad H and Zelek, John and Asmar, Daniel},
+  booktitle={2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={10089--10096},
+  year={2024},
+  organization={IEEE}
+}
 ```
 
 
@@ -177,7 +190,7 @@ roslaunch hslam_ros hslam_live.launch
 ```
 Start moving the camera around and perform realtime Visual SLAM!
 
-P.S. to get better results to provide the proper camera matrix instead of the stock camera.txt file provided.
+**NB.** to get better results to provide the proper camera matrix instead of the stock camera.txt file provided.
 
 ### Results:
 
@@ -189,6 +202,11 @@ Additionally, the following data is published over the ROS network:
 1. **/hslam_path**: publishes the current camera pose.
 2. **/hslam_pose**: published the path tracked so far.
 3. **/hslam_map**: publishes the map redered so far.
+
+You should get an output similair to screenshot below showing the SLAM process:
+![hslam-output-screenshot](https://github.com/8bit-nyk/HSLAM/assets/49674476/ab3a1c94-8f38-41da-855d-c25566f720c4)
+
+
 
 
 ## Features
@@ -209,4 +227,9 @@ Contributions to the H-SLAM project are welcome. If you would like to contribute
 5. Submit a pull request detailing the changes you have made.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This repository is licensed under the GNU General Public License version 3 [GPLv3](LICENSE).
+
+This work is a joint collaborative effort between the:
+
+- Vision and Robotics Lab at the American University of Beirut (AUB)
+- Vision and Image Processing Group at the University of Waterloo (UW)
